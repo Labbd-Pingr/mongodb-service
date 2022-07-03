@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start:prod": "yarn build && node ./dist/src/server.js",
+    "start:prod": "yarn build && node ./dist/src/app/express/index.js",
     "eslint:fix": "eslint --fix"
   },
   "dependencies": {

@@ -7,6 +7,6 @@
   "watch": [
     "./src"
   ],
-  "exec": "ts-node ./src/index.ts",
+  "exec": "ts-node ./src/app/express/index.ts",
   "ext": ".ts"
 }
