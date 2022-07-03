@@ -1,4 +1,4 @@
 export interface ICreatePost {
-  profile_id: string;
+  profileId: string;
   text: string;
 }

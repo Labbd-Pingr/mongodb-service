@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { Application } from 'express';
 import { Db } from 'mongodb';
 import setupMongo from '../mongodb/index';
+import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
 
 const app: Application = express();
@@ -10,10 +11,12 @@ let db: Db | undefined;
 async function setup() {
   db = await setupMongo();
   const postController: PostController = new PostController(db as Db);
+  const chatController: ChatController = new ChatController(db as Db);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/posts', postController.router);
+  app.use('/chats', chatController.router);
 }
 
 async function init() {

@@ -36,7 +36,7 @@ export default class PostController {
   private async createPost(req: Request, resp: Response) {
     const input: ICreatePost = req.body as ICreatePost;
     const id = await this.postUsecases.createPost(input);
-    if (id != null) resp.status(201).json(id);
+    if (id != null) resp.sendStatus(201).json(id);
     else resp.sendStatus(400);
   }
 

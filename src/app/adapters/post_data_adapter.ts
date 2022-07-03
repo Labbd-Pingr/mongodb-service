@@ -19,10 +19,7 @@ export default class PostDataAdapter implements IPostDataPort {
   }
 
   public async get(query: Query): Promise<Post[]> {
-    console.log('Query:' + query.id);
     const posts = await this.postCollection.find(query);
-    console.log('Query result:');
-    posts.forEach((post) => console.log(post));
     return posts
       .map((post) => {
         return new Post(post.id, post.profileId, post.datetime, post.text.text);

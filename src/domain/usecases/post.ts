@@ -7,12 +7,12 @@ export default class PostUsecases {
   constructor(private readonly postDataPort: IPostDataPort) {}
 
   public async createPost({
-    profile_id,
+    profileId,
     text,
   }: ICreatePost): Promise<string | null> {
     try {
       const id = v4();
-      const post: Post = new Post(id, profile_id, new Date(), text || '');
+      const post: Post = new Post(id, profileId, new Date(), text || '');
       const dbId = await this.postDataPort.savePost(post);
       if (dbId == undefined) throw new Error();
       return id;
