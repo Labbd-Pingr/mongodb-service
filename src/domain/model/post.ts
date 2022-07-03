@@ -12,10 +12,10 @@ export default class Post {
   public readonly text: Text | null = null;
 
   constructor(
-    public readonly profile_id: string,
+    public readonly id: string,
+    public readonly profileId: string,
     public readonly datetime: Date,
-    text: string,
-    public readonly id: string = ''
+    text: string
   ) {
     if (text.length > 140) {
       throw new PostTooLongError();

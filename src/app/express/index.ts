@@ -13,7 +13,7 @@ async function setup() {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use('/post', postController.router);
+  app.use('/posts', postController.router);
 }
 
 async function init() {
