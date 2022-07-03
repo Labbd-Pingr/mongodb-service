@@ -1,8 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { Db } from 'mongodb';
-import ChatDataAdapter from 'src/app/adapters/chat_data_adapter';
-import ChatUsecases from 'src/domain/usecases/chat';
-import { IChatCreate, ISendMessage } from 'src/domain/usecases/interface.chat';
+import ChatDataAdapter from '../../adapters/chat_data_adapter';
+import ChatUsecases from '../../../domain/usecases/chat';
+import {
+  IChatCreate,
+  ISendMessage,
+} from '../../../domain/usecases/interface.chat';
 
 export default class ChatController {
   private readonly _router: Router;
