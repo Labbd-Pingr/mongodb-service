@@ -1,22 +1,22 @@
-import { Pool, PoolClient } from 'pg'
+import { exit } from 'process';
+import { DataSource } from 'typeorm';
+import { ProfileModel } from './model/profile';
 
-export interface ConnectFunction {
-  (): Promise<PoolClient | undefined>;
-}
-
-export default (dbName = 'ep4'): ConnectFunction => {
-  const pool: Pool = new Pool({
-    user: process.env.POSTGRES_USER || "postgres",
+export default async (): Promise<DataSource> => {
+  const appDataSource = new DataSource({
+    type: 'postgres',
+    username: process.env.POSTGRES_USER || 'postgres',
     password: process.env.POSTGRES_PASSWORD,
-    host: "postgres",
-    database: dbName
+    host: 'postgres',
+    database: process.env.POSTGRES_USER || 'postgres',
+    entities: [ProfileModel],
+    synchronize: true,
   });
-  
-  return async () => {
-      try {
-        return await pool.connect();
-      } catch (error) {
-        console.log((error as Error).message);
-      }
+
+  try {
+    return await appDataSource.initialize();
+  } catch (error) {
+    console.log((error as Error).message);
+    exit(1);
   }
-}
+};

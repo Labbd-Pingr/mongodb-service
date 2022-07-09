@@ -1,12 +1,12 @@
 import Chat from '../model/chat';
 import IChatDataPort from '../ports/chat_data_port';
 import { v4 } from 'uuid';
-import { IChatCreate, ISendMessage } from './interface.chat';
+import { ICreateChat, ISendMessage } from './interface.chat';
 
 export default class ChatUsecases {
   constructor(private readonly chatDataPort: IChatDataPort) {}
 
-  public async createChat({ accountIds }: IChatCreate) {
+  public async createChat({ accountIds }: ICreateChat) {
     const id = v4();
     const chat = new Chat(id, accountIds);
     const dbId = await this.chatDataPort.saveChat(chat);

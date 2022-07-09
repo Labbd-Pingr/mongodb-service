@@ -4,7 +4,6 @@ import InvalidUsernameError from '../exceptions/invalid_username';
 export default class Profile {
   constructor(
     public username: string,
-    public email: string,
     public name: string = username,
     public bio: string = '',
     public birthDate: Date | null = null

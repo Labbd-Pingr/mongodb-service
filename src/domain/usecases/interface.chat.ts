@@ -1,4 +1,4 @@
-export interface IChatCreate {
+export interface ICreateChat {
   accountIds: string[];
 }
 

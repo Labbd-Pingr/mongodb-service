@@ -1,25 +1,30 @@
 import 'dotenv/config';
+import 'reflect-metadata';
 import express, { Application } from 'express';
 import { Db } from 'mongodb';
 import setupMongo from '../mongodb/index';
-import setupPostgres, { ConnectFunction } from '../postgresql/index';
+import setupPostgres from '../postgresql/index';
+import ProfileController from './controllers/profile_controller';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
+import { DataSource } from 'typeorm';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
 let mongo: Db | undefined;
-let postgresConnector: ConnectFunction | undefined;
+let postgres: DataSource | undefined;
 async function setup() {
   mongo = await setupMongo();
-  postgresConnector = setupPostgres();  
-  const postController: PostController = new PostController(mongo as Db);
-  const chatController: ChatController = new ChatController(mongo as Db);
+  postgres = await setupPostgres();
+  const postController: PostController = new PostController(mongo);
+  const chatController: ChatController = new ChatController(mongo);
+  const profileController: ProfileController = new ProfileController(postgres);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
+  app.use('/profiles', profileController.router);
 }
 
 async function init() {

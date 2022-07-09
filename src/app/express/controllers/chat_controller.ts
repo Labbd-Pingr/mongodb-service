@@ -3,7 +3,7 @@ import { Db } from 'mongodb';
 import ChatDataAdapter from '../../adapters/chat_data_adapter';
 import ChatUsecases from '../../../domain/usecases/chat';
 import {
-  IChatCreate,
+  ICreateChat,
   ISendMessage,
 } from '../../../domain/usecases/interface.chat';
 
@@ -22,7 +22,7 @@ export default class ChatController {
   }
 
   private async createChat(req: Request, resp: Response) {
-    const input: IChatCreate = req.body as IChatCreate;
+    const input: ICreateChat = req.body as ICreateChat;
 
     const id = await this.chatUsecases.createChat(input);
     if (id != null) resp.status(201).json(id);
