@@ -2,16 +2,19 @@ import 'dotenv/config';
 import express, { Application } from 'express';
 import { Db } from 'mongodb';
 import setupMongo from '../mongodb/index';
+import setupPostgres, { ConnectFunction } from '../postgresql/index';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
-let db: Db | undefined;
+let mongo: Db | undefined;
+let postgresConnector: ConnectFunction | undefined;
 async function setup() {
-  db = await setupMongo();
-  const postController: PostController = new PostController(db as Db);
-  const chatController: ChatController = new ChatController(db as Db);
+  mongo = await setupMongo();
+  postgresConnector = setupPostgres();  
+  const postController: PostController = new PostController(mongo as Db);
+  const chatController: ChatController = new ChatController(mongo as Db);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
