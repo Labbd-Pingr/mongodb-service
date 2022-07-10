@@ -1,0 +1,53 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Pingrr-- API",
+    "description": "Pingr-- API Documentation"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/profiles": {
+      "get": {
+        "summary": "Get profiles",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "username",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "bio",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "birthDate",
+            "type": "date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Array of Profiles"
+          }
+        }
+      },
+      "post": {}
+    }
+  }
+}

@@ -1,13 +1,15 @@
 import 'dotenv/config';
 import 'reflect-metadata';
+import * as swaggerDoc from '../swagger/api.json';
+import swaggerUI from 'swagger-ui-express';
 import express, { Application } from 'express';
-import { Db } from 'mongodb';
-import setupMongo from '../mongodb/index';
 import setupPostgres from '../postgresql/index';
+import setupMongo from '../mongodb/index';
 import ProfileController from './controllers/profile_controller';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
 import { DataSource } from 'typeorm';
+import { Db } from 'mongodb';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -22,9 +24,10 @@ async function setup() {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
+  app.use('/profiles', profileController.router);
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
-  app.use('/profiles', profileController.router);
 }
 
 async function init() {
