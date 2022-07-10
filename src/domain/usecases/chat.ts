@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import { ICreateChat, ISendMessage } from './interface.chat';
 
 export default class ChatUsecases {
-  constructor(private readonly chatDataPort: IChatDataPort) {}
+  constructor(protected readonly chatDataPort: IChatDataPort) {}
 
   public async createChat({ accountIds }: ICreateChat) {
     const id = v4();

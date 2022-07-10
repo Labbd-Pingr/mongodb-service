@@ -1,5 +1,4 @@
 import Chat, { Message } from '../model/chat';
-import Post from '../model/post';
 
 export interface Query {
   accountIds?: string[];
