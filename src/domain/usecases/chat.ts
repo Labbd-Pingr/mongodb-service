@@ -37,9 +37,38 @@ export default class ChatUsecases {
     }
   }
 
-  //TODO
-  // public async getChatByAccountIds(accountIds: string[]) {}
+  public async getChatByAccountIds(accountIds: string[]): Promise<Chat | null> {
+    try {
+      accountIds.sort();
+      const chats = await this.chatDataPort.get({ accountIds: accountIds });
 
-  //TODO
-  // public async getChatById(chatId: string) {}
+      if (chats.length == 0) throw new Error('Chat does not exist!');
+
+      const chat = chats[0];
+      return chat;
+    } catch (e) {
+      const error: Error = e as Error;
+      console.log(
+        `[ERROR] Chat was not able to be retrieved! ${error.message}`
+      );
+      return null;
+    }
+  }
+
+  public async getChatById(chatId: string): Promise<Chat | null> {
+    try {
+      const chats = await this.chatDataPort.get({ id: chatId });
+
+      if (chats.length == 0) throw new Error('Chat does not exist!');
+
+      const chat = chats[0];
+      return chat;
+    } catch (e) {
+      const error: Error = e as Error;
+      console.log(
+        `[ERROR] Chat was not able to be retrieved! ${error.message}`
+      );
+      return null;
+    }
+  }
 }
