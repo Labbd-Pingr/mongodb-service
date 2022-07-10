@@ -4,7 +4,6 @@ import IProfileDataPort, {
 } from '../../domain/ports/profile_data_port';
 import { ProfileModel } from '../postgresql/model/profile';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
-import { parse } from 'path';
 
 export default class ProfileDataAdapter implements IProfileDataPort {
   private profileRepository: Repository<ProfileModel>;
