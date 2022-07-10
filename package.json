@@ -1,8 +1,8 @@
 {
-  "name": "service-boilerplate",
+  "name": "pingr--",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:Labbd-Pingr/service-boilerplate.git",
+  "repository": "git@github.com:Labbd-Pingr/pingr--.git",
   "author": "Thiago Guerrero <tgbalera@hotmail.com>",
   "license": "MIT",
   "scripts": {
@@ -12,11 +12,13 @@
     "eslint:fix": "eslint --fix"
   },
   "dependencies": {
+    "@types/swagger-ui-express": "^4.1.3",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongodb": "^4.7.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
+    "swagger-ui-express": "^4.4.0",
     "ts-node": "^10.8.2",
     "typeorm": "^0.3.7",
     "typescript": "^4.7.4",
