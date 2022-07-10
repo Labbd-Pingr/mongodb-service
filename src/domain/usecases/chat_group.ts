@@ -40,6 +40,13 @@ export default class ChatGroupUsecases extends ChatUsecases {
 
       const chat = chats[0];
       chat.addUser(userId);
+      const dbId = await (this.chatDataPort as IChatGroupDataPort).addGroupUser(
+        chat,
+        userId
+      );
+
+      if (dbId == undefined) throw new Error();
+
       return true;
     } catch (e) {
       const error: Error = e as Error;

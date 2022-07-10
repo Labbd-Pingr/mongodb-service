@@ -9,5 +9,5 @@ export interface ChatGroupQuery extends Query {
 
 export default interface IChatGroupDataPort extends IChatDataPort {
   get: (query: ChatGroupQuery) => Promise<ChatGroup[]>;
-  addGroupUser: (chat: ChatGroup, id: string) => Promise<ChatGroup>;
+  addGroupUser: (chat: ChatGroup, id: string) => Promise<string | undefined>;
 }
