@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "Pingrr-- API",
+    "title": "Pingr-- API",
     "description": "Pingr-- API Documentation"
   },
   "host": "localhost:3000",
@@ -46,8 +46,42 @@
             "description": "OK - Array of Profiles"
           }
         }
+      }
+    },
+    "/posts": {
+      "get": {
+        "summary": "Get posts",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "profileId",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Array of posts"
+          }
+        }
       },
-      "post": {}
+      "post": {
+        "summary": "Create new post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {}
+          }
+        }
+      }
+    },
+    "/posts/{id}": {
+      "get": {},
+      "delete": {}
     }
   }
 }
