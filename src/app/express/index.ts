@@ -5,19 +5,24 @@ import swaggerUI from 'swagger-ui-express';
 import express, { Application } from 'express';
 import setupPostgres from '../postgresql/index';
 import setupMongo from '../mongodb/index';
+import setupNeo4j from '../neo4j/index';
 import ProfileController from './controllers/profile_controller';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
+import { Driver } from 'neo4j-driver';
+import { exit } from 'process';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
 let mongo: Db | undefined;
 let postgres: DataSource | undefined;
+let neo4j: Driver | undefined;
 async function setup() {
   mongo = await setupMongo();
   postgres = await setupPostgres();
+  neo4j = await setupNeo4j();
   const postController: PostController = new PostController(mongo);
   const chatController: ChatController = new ChatController(mongo);
   const profileController: ProfileController = new ProfileController(postgres);
@@ -42,6 +47,7 @@ async function init() {
         (e as Error).message
       }`
     );
+    exit(1);
   }
 }
 

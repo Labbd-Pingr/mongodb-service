@@ -3,6 +3,7 @@ version: '3.7'
 services:
   app:
     build: .
+    restart: on-failure
     env_file:
       - .env
     ports: 
@@ -10,8 +11,12 @@ services:
     volumes:
       - ./:/usr/src/app
     depends_on:
-      - mongo
-      - postgres
+      mongo:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
   
   mongo:
     image: mongo
@@ -22,11 +27,34 @@ services:
 
   postgres:
     image: postgres
+    healthcheck:
+      test: bash -c "pg_isready -U ${POSTGRES_USER}"
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s  
     env_file:
       - .env
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  neo4j:
+    image: neo4j
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
+    volumes:
+      - neo4j:/data
+      - neo4jP:/plugins
+    env_file:
+      - .env
+    environment:
+      NEO4J_dbms_logs_debug_level: DEBUG
 volumes:
   mongo:
   postgres:
+  neo4j:
+  neo4jP:
