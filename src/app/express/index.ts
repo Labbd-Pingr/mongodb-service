@@ -23,7 +23,7 @@ async function setup() {
   mongo = await setupMongo();
   postgres = await setupPostgres();
   neo4j = await setupNeo4j();
-  const postController: PostController = new PostController(mongo);
+  const postController: PostController = new PostController(mongo, neo4j);
   const chatController: ChatController = new ChatController(mongo);
   const profileController: ProfileController = new ProfileController(postgres);
 

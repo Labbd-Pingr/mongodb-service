@@ -5,14 +5,15 @@ import PostUsecases from '../../../domain/usecases/post';
 import { ICreatePost } from 'src/domain/usecases/interface.post';
 import Post from 'src/domain/model/post';
 import { Query } from 'src/domain/ports/post_data_port';
+import Neo4jRepository from 'src/app/neo4j/neo4j_repository';
 
 export default class PostController {
   private readonly _router: Router;
   private postUsecases: PostUsecases;
 
-  constructor(db: Db) {
+  constructor(db: Db, neo4j: Neo4jRepository) {
     this._router = Router();
-    this.postUsecases = new PostUsecases(new PostDataAdapter(db));
+    this.postUsecases = new PostUsecases(new PostDataAdapter(db, neo4j));
     this.mapRoutes();
   }
 
@@ -40,6 +41,13 @@ export default class PostController {
     else resp.sendStatus(400);
   }
 
+  private async likePost(req: Request, resp: Response) {
+    const postId = req.params.id;
+    const userId = 1
+    this.postUsecases.likePost(postId, userId.toString());
+    resp.sendStatus(200);
+  }
+
   private async deletePostById(req: Request, resp: Response) {
     const postId = req.params.id;
     this.postUsecases.deletePostById(postId);
@@ -51,5 +59,6 @@ export default class PostController {
     this._router.get('/', this.getPosts.bind(this));
     this._router.get('/:id', this.getPostById.bind(this));
     this._router.delete('/:id', this.deletePostById.bind(this));
+    this._router.put('/:id/like', this.likePost.bind(this));
   }
 }

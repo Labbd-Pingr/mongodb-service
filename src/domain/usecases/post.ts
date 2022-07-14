@@ -2,6 +2,7 @@ import Post from '../model/post';
 import IPostDataPort, { Query } from '../ports/post_data_port';
 import { ICreatePost } from './interface.post';
 import { v4 } from 'uuid';
+import Profile from '../model/profile';
 
 export default class PostUsecases {
   constructor(private readonly postDataPort: IPostDataPort) {}
@@ -21,6 +22,18 @@ export default class PostUsecases {
       console.log(`[ERROR] Post was not able to be created! ${error.message}`);
       return null;
     }
+  }
+
+  public async likePost(id: string, profileId: string) {
+    const post = await this.getPostById(id)
+    // Procurar por usuário
+    const profile = new Profile("Alfredo Goldman")
+
+    if (post) {
+      return this.postDataPort.likePost(post, profile)
+    }
+
+    return 0
   }
 
   public async deletePostById(id: string) {
