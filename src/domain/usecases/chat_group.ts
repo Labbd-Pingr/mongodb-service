@@ -1,7 +1,7 @@
 import ChatGroup from '../model/chat_group';
 import IChatGroupDataPort from '../ports/chat_group_data_port';
 import { v4 } from 'uuid';
-import { ICreateGroupChat } from './interface.group_chat';
+import { IAddUser, ICreateGroupChat } from './interface.group_chat';
 import { ISendMessage } from './interface.chat';
 
 export default class ChatGroupUsecases {
@@ -29,16 +29,19 @@ export default class ChatGroupUsecases {
     return id;
   }
 
-  public async addUser(userId: string, chatToken: string): Promise<boolean> {
+  public async addUser(
+    chatId: string,
+    { accountId, chatToken }: IAddUser
+  ): Promise<boolean> {
     try {
       const chats = await this.chatDataPort.get({
-        token: chatToken,
+        id: chatId,
       });
       if (chats.length == 0) throw new Error('Chat does not exist!');
 
       const chat = chats[0];
-      chat.addUser(userId);
-      const dbId = await this.chatDataPort.addGroupUser(chat, userId);
+      chat.addUser(accountId, chatToken);
+      const dbId = await this.chatDataPort.addGroupUser(chat, accountId);
 
       if (dbId == undefined) throw new Error();
 

@@ -13,6 +13,7 @@ import Neo4jRepository from '../neo4j/neo4j_repository';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
 import { exit } from 'process';
+import ChatGroupController from './controllers/chat_group_controller';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -25,6 +26,9 @@ async function setup() {
   neo4j = await setupNeo4j();
   const postController: PostController = new PostController(mongo, neo4j);
   const chatController: ChatController = new ChatController(mongo);
+  const groupChatController: ChatGroupController = new ChatGroupController(
+    mongo
+  );
   const profileController: ProfileController = new ProfileController(postgres);
 
   app.use(express.json());
@@ -33,6 +37,7 @@ async function setup() {
   app.use('/profiles', profileController.router);
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
+  app.use('/groups', groupChatController.router);
 }
 
 async function init() {
