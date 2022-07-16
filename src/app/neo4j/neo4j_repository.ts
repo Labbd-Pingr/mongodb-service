@@ -7,11 +7,10 @@ export default class Neo4jRepository {
     this.neo4jDriver = neo4j;
   }
 
-  public runCommand(command: string, args: any = {}) {
+  public async runCommand(command: string, args: any = {}) {
     const session: Session = this.neo4jDriver.session();
-    const result = session.run(command, args);
-    session.close();
+    const result = await session.run(command, args);
+    await session.close();
     return result;
   }
-
 }

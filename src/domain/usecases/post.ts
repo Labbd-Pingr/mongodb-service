@@ -1,11 +1,23 @@
 import Post from '../model/post';
 import IPostDataPort, { Query } from '../ports/post_data_port';
-import { ICreatePost } from './interface.post';
+import { ICreatePost, ISharePost } from './interface.post';
 import { v4 } from 'uuid';
 import Profile from '../model/profile';
 
 export default class PostUsecases {
   constructor(private readonly postDataPort: IPostDataPort) {}
+
+  public async sharePost({
+    profileId,
+    text,
+    sharedPostId,
+  }: ISharePost): Promise<string | null> {
+    const createdPostId = await this.createPost({ profileId, text });
+    if (createdPostId) {
+      this.postDataPort.sharePost(createdPostId, sharedPostId);
+    }
+    return null;
+  }
 
   public async createPost({
     profileId,
@@ -25,12 +37,12 @@ export default class PostUsecases {
   }
 
   public async likePost(id: string, profileId: string) {
-    const post = await this.getPostById(id)
+    const post = await this.getPostById(id);
     // Procurar por usuário
-    const profile = new Profile("Alfredo Goldman")
+    const profile = new Profile("Alfredo Goldman");
 
     if (post) {
-      return this.postDataPort.likePost(post, profile)
+      return this.postDataPort.likePost(post, profile);
     }
 
     return 0

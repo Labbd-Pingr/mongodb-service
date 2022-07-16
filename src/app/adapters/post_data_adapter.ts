@@ -15,22 +15,40 @@ export default class PostDataAdapter implements IPostDataPort {
 
   public async savePost(post: Post): Promise<string | undefined> {
     const savedPost = await this.postCollection.insertOne(post);
+    await this.neo4j.runCommand('CREATE (:post {postId: $id})', {
+      id: post.id,
+    });
     return savedPost.insertedId.toString();
   }
 
+  public async sharePost(
+    createdPostId: string,
+    sharedPostId: string
+  ): Promise<number> {
+    await this.neo4j.runCommand(
+      'MATCH (p1: post), (p2: post) WHERE p1.postId = $postId AND p2.postId = $sharedPostId CREATE (p1)-[:SHARE]->(p2)',
+      { postId: createdPostId, sharedPostId: sharedPostId }
+    );
+    return 1;
+  }
+
   public async likePost(post: Post, profile: Profile): Promise<number> {
-    const profileId = 1
+    // Usar o id do profile aqui
+    const profileId = 1;
 
-    this.neo4j.runCommand(
-      'MATCH (u:user), (p:post) WHERE u.id = $userId AND p.id = $postId CREATE (u)-[r:LIKE]->(p)', 
-      { userId: profileId, postId: post.id }
-    )
-
-    return 1
+    await this.neo4j.runCommand(
+      'MATCH (p:profile), (p:post) WHERE p.profileId = $profileId AND p.postId = $postId CREATE (u)-[r:LIKE]->(p)',
+      { profileId: profileId, postId: post.id }
+    );
+    return 1;
   }
 
   public async delete(query: Query): Promise<number> {
     const result: DeleteResult = await this.postCollection.deleteOne(query);
+    await this.neo4j.runCommand(
+      'MATCH (p: post) WHERE p.postId = $postId DETACH DELETE p',
+      { postId: query.id }
+    );
     return result.deletedCount;
   }
 
