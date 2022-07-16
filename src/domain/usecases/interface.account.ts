@@ -6,3 +6,9 @@ export interface ICreateAccount {
   bio?: string;
   birthDate?: Date;
 }
+
+export interface UsecaseResponse<T> {
+  succeed: boolean;
+  response?: T;
+  errors?: string;
+}

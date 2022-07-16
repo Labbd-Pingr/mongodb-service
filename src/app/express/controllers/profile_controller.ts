@@ -1,9 +1,6 @@
 import { Request, Response, Router } from 'express';
 import ProfileDataAdapter from '../../adapters/profile_data_adapter';
-import {
-  ICreateProfile,
-  IUpdateProfile,
-} from '../../../domain/usecases/interface.profile';
+import { IUpdateProfile } from '../../../domain/usecases/interface.profile';
 import { ProfileQuery } from '../../../domain/ports/profile_data_port';
 import ProfileUsecases from '../../../domain/usecases/profile';
 import Profile from '../../../domain/model/profile';
@@ -21,14 +18,6 @@ export default class ProfileController {
 
   public get router(): Router {
     return this._router;
-  }
-
-  private async createProfile(req: Request, resp: Response) {
-    const input: ICreateProfile = req.body as ICreateProfile;
-
-    const id = await this.profileUsecases.createProfile(input);
-    if (id != null) resp.json(id).status(201);
-    else resp.sendStatus(400);
   }
 
   private async getProfileById(req: Request, resp: Response) {
@@ -67,7 +56,6 @@ export default class ProfileController {
   }
 
   private mapRoutes() {
-    this._router.post('/', this.createProfile.bind(this));
     this._router.get('/', this.getProfileByQuery.bind(this));
     this._router.get('/usernames', this.getProfileByUsernameMatch.bind(this));
     this._router.get('/:id', this.getProfileById.bind(this));

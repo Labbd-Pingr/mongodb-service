@@ -6,10 +6,13 @@ import express, { Application } from 'express';
 import setupPostgres from '../postgresql/index';
 import setupMongo from '../mongodb/index';
 import setupNeo4j from '../neo4j/index';
+import setupRedis from '../redis/index';
 import ProfileController from './controllers/profile_controller';
+import AccountController from './controllers/account_controller';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
 import Neo4jRepository from '../neo4j/neo4j_repository';
+import RedisRepository from '../redis/redis_repository';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
 import { exit } from 'process';
@@ -19,18 +22,26 @@ const port = process.env.PORT || 3000;
 let mongo: Db | undefined;
 let postgres: DataSource | undefined;
 let neo4j: Neo4jRepository | undefined;
+let redis: RedisRepository | undefined;
 async function setup() {
   mongo = await setupMongo();
   postgres = await setupPostgres();
   neo4j = await setupNeo4j();
+  redis = await setupRedis();
   const postController: PostController = new PostController(mongo, neo4j);
   const chatController: ChatController = new ChatController(mongo);
   const profileController: ProfileController = new ProfileController(postgres);
+  const accountController: AccountController = new AccountController(
+    postgres,
+    neo4j,
+    redis
+  );
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
   app.use('/profiles', profileController.router);
+  app.use('/accounts', accountController.router);
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
 }

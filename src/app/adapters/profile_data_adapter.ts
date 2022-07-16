@@ -11,7 +11,7 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     this.profileRepository = db.getRepository('profile');
   }
 
-  public async create(profile: Profile): Promise<string | undefined> {
+  public async create(profile: Profile): Promise<string> {
     let convertedProfile = this.convertDomainToApp(profile);
     convertedProfile = await this.profileRepository.save(convertedProfile);
     return convertedProfile.id.toString();
@@ -46,6 +46,11 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     convertedProfile.id = parseInt(id);
     convertedProfile = await this.profileRepository.save(convertedProfile);
     return convertedProfile.id.toString();
+  }
+
+  public async deleteById(id: string): Promise<boolean> {
+    const result = await this.profileRepository.delete(parseInt(id));
+    return result.affected == 1;
   }
 
   private convertDomainToApp(profile: Profile): ProfileModel {

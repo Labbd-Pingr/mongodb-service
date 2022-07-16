@@ -1,29 +1,9 @@
 import Profile from '../model/profile';
 import IProfileDataPort, { ProfileQuery } from '../ports/profile_data_port';
-import { ICreateProfile, IUpdateProfile } from './interface.profile';
+import { IUpdateProfile } from './interface.profile';
 
 export default class ProfileUsecases {
   constructor(private readonly profileDataPort: IProfileDataPort) {}
-
-  public async createProfile({
-    username,
-    name,
-    bio,
-    birthDate,
-  }: ICreateProfile): Promise<string | null> {
-    try {
-      const profile: Profile = new Profile(username, name, bio, birthDate);
-      const dbId = await this.profileDataPort.create(profile);
-      if (!dbId) throw new Error();
-      return dbId;
-    } catch (e) {
-      const error: Error = e as Error;
-      console.log(
-        `[ERROR] Profile was not able to be created! ${error.message}`
-      );
-      return null;
-    }
-  }
 
   public async getProfileById(id: string): Promise<Profile | null> {
     const profiles = await this.profileDataPort.get({ id });

@@ -9,8 +9,9 @@ export interface ProfileQuery {
 }
 
 export default interface IProfileDataPort {
-  create: (profile: Profile) => Promise<string | undefined>;
+  create: (profile: Profile) => Promise<string>;
   get: (query: ProfileQuery) => Promise<Profile[]>;
   getByUsernameMatch: (username: string) => Promise<Profile[]>;
   update: (id: string, profile: Profile) => Promise<string | undefined>;
+  deleteById: (id: string) => Promise<boolean>;
 }

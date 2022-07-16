@@ -17,6 +17,8 @@ services:
         condition: service_healthy
       neo4j:
         condition: service_healthy
+      redis:
+        condition: service_healthy
   
   mongo:
     image: mongo
@@ -54,10 +56,21 @@ services:
       - neo4jP:/plugins
     env_file:
       - .env
-    environment:
-      NEO4J_dbms_logs_debug_level: DEBUG
+
+  redis:
+    image: redis/redis-stack
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s  
+    volumes:
+      - redis:/data
+
 volumes:
   mongo:
   postgres:
   neo4j:
   neo4jP:
+  redis:

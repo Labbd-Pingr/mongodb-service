@@ -12,12 +12,15 @@
     "eslint:fix": "eslint --fix"
   },
   "dependencies": {
+    "@node-redis/search": "^1.0.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongodb": "^4.7.0",
     "neo4j": "^2.0.0-RC2",
     "neo4j-driver": "^4.4.6",
     "pg": "^8.7.3",
+    "redis": "^4.2.0",
+    "redis-om": "^0.3.6",
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.4.0",
     "ts-node": "^10.8.2",
