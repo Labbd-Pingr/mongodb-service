@@ -39,7 +39,7 @@ export default class PostUsecases {
   public async likePost(id: string, profileId: string) {
     const post = await this.getPostById(id);
     // Procurar por usuário
-    const profile = new Profile("Alfredo Goldman");
+    const profile = new Profile('Alfredo Goldman');
 
     if (post) {
       return this.postDataPort.likePost(post, profile);
