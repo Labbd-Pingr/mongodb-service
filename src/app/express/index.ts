@@ -9,16 +9,16 @@ import setupNeo4j from '../neo4j/index';
 import ProfileController from './controllers/profile_controller';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
+import Neo4jRepository from '../neo4j/neo4j_repository';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
-import { Driver } from 'neo4j-driver';
 import { exit } from 'process';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
 let mongo: Db | undefined;
 let postgres: DataSource | undefined;
-let neo4j: Driver | undefined;
+let neo4j: Neo4jRepository | undefined;
 async function setup() {
   mongo = await setupMongo();
   postgres = await setupPostgres();
