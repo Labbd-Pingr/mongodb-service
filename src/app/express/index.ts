@@ -16,6 +16,7 @@ import RedisRepository from '../redis/redis_repository';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
 import { exit } from 'process';
+import ChatGroupController from './controllers/chat_group_controller';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +31,9 @@ async function setup() {
   redis = await setupRedis();
   const postController: PostController = new PostController(mongo, neo4j);
   const chatController: ChatController = new ChatController(mongo);
+  const groupChatController: ChatGroupController = new ChatGroupController(
+    mongo
+  );
   const profileController: ProfileController = new ProfileController(postgres);
   const accountController: AccountController = new AccountController(
     postgres,
@@ -44,6 +48,7 @@ async function setup() {
   app.use('/accounts', accountController.router);
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
+  app.use('/groups', groupChatController.router);
 }
 
 async function init() {

@@ -1,6 +1,6 @@
 import { Message } from '../model/chat';
 import ChatGroup from '../model/chat_group';
-import IChatDataPort, { Query } from './chat_data_port';
+import { Query } from './chat_data_port';
 
 export interface ChatGroupQuery extends Query {
   ownerAccountId?: string;
