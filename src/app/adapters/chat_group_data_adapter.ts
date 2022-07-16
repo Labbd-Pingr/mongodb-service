@@ -1,6 +1,6 @@
 import { Collection, Db } from 'mongodb';
 import { Message } from '../../domain/model/chat';
-import ChatGroup from 'src/domain/model/chat_group';
+import ChatGroup from '../../domain/model/chat_group';
 import IChatGroupDataPort, {
   ChatGroupQuery,
 } from '../../domain/ports/chat_group_data_port';

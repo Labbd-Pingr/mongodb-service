@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { Db } from 'mongodb';
-import ChatGroupUsecases from 'src/domain/usecases/chat_group';
+import ChatGroupUsecases from '../../../domain/usecases/chat_group';
 import { ISendMessage } from '../../../domain/usecases/interface.chat';
-import ChatGroupDataAdapter from 'src/app/adapters/chat_group_data_adapter';
+import ChatGroupDataAdapter from '../../adapters/chat_group_data_adapter';
 import {
   IAddUser,
   ICreateGroupChat,
