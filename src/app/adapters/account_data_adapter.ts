@@ -1,38 +1,22 @@
-import {
-  DataSource,
-  FindManyOptions,
-  FindOptionsWhere,
-  Repository as RepositoryP,
-} from 'typeorm';
-import { Repository as RepositoryR } from 'redis-om';
+import { DataSource, FindManyOptions, Repository } from 'typeorm';
 import Account from '../../domain/model/account';
 import IAccountDataPort, {
   AccountQuery,
 } from '../../domain/ports/account_data_port';
 import Neo4jRepository from '../neo4j/neo4j_repository';
-import { AccountModel as AccountModelP } from '../postgresql/model/account';
+import { AccountModel } from '../postgresql/model/account';
 import { ProfileModel } from '../postgresql/model/profile';
-import RedisRepository from '../redis/redis_repository';
-import { AccountModel as AccountModelR } from '../redis/model/account';
 import Profile from '../../domain/model/profile';
 
-const SESSION_LIFETIME_IN_DAYS = 1;
-
 export default class AccountDataAdapter implements IAccountDataPort {
-  private readonly accountRepositoryPostgres: RepositoryP<AccountModelP>;
-  private readonly profileRepositoryPostgres: RepositoryP<ProfileModel>;
+  private readonly accountRepositoryPostgres: Repository<AccountModel>;
+  private readonly profileRepositoryPostgres: Repository<ProfileModel>;
   private readonly neo4jRepository: Neo4jRepository;
-  private readonly accountRepositoryRedis: RepositoryR<AccountModelR>;
 
-  constructor(
-    postgres: DataSource,
-    neo4j: Neo4jRepository,
-    redis: RedisRepository
-  ) {
+  constructor(postgres: DataSource, neo4j: Neo4jRepository) {
     this.accountRepositoryPostgres = postgres.getRepository('account');
     this.profileRepositoryPostgres = postgres.getRepository('profile');
     this.neo4jRepository = neo4j;
-    this.accountRepositoryRedis = redis.getAccountRepository();
   }
 
   public async create(account: Account, profileId: string): Promise<string> {
@@ -70,7 +54,7 @@ export default class AccountDataAdapter implements IAccountDataPort {
       },
     };
 
-    const accounts: AccountModelP[] = await this.accountRepositoryPostgres.find(
+    const accounts: AccountModel[] = await this.accountRepositoryPostgres.find(
       convertedQuery as FindManyOptions<Account>
     );
 
@@ -82,47 +66,14 @@ export default class AccountDataAdapter implements IAccountDataPort {
     return result.affected == 1;
   }
 
-  public async isLoggedIn(accountId: string): Promise<boolean> {
-    const session = await this.accountRepositoryRedis
-      .search()
-      .where('accountId')
-      .equals(accountId)
-      .returnFirst();
-
-    if (session == null) return false;
-    if (session.expirationDate <= Date.now()) return false;
-
-    return true;
-  }
-
-  public async logIn(accountId: string): Promise<string> {
-    let session = await this.accountRepositoryRedis
-      .search()
-      .where('accountId')
-      .equals(accountId)
-      .returnFirst();
-
-    if (session == null) {
-      session = await this.accountRepositoryRedis.createEntity({
-        accountId,
-      });
-    }
-
-    const expirationDate = Date.now() + SESSION_LIFETIME_IN_DAYS;
-
-    session.expirationDate = expirationDate;
-    await this.accountRepositoryRedis.save(session);
-    return session.entityId;
-  }
-
-  private convertDomainAccountToApp(account: Account): AccountModelP {
-    const convertedAccount = new AccountModelP();
+  private convertDomainAccountToApp(account: Account): AccountModel {
+    const convertedAccount = new AccountModel();
     convertedAccount.email = account.email;
     convertedAccount.password = account.password;
     return convertedAccount;
   }
 
-  private convertAppAccountToDomain(account: AccountModelP): Account {
+  private convertAppAccountToDomain(account: AccountModel): Account {
     const convertedProfile = new Account(
       account.email,
       account.password,

@@ -141,6 +141,27 @@
         }
       }
     },
+    "/auth/{sessionId}": {
+      "get": {
+        "summary": "Validate and get session information",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Account Id associated with the session"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/profiles": {
       "get": {
         "summary": "Get profiles",

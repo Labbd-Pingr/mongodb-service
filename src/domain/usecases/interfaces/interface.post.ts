@@ -6,5 +6,5 @@ export interface ICreatePost {
 export interface ISharePost {
   profileId: string;
   text: string;
-  sharedPostId: string
+  sharedPostId: string;
 }

@@ -1,13 +1,16 @@
 import Account from '../model/account';
 import Profile from '../model/profile';
 import IAccountDataPort from '../ports/account_data_port';
+import ILoginDataPort from '../ports/login_data_port';
 import IProfileDataPort from '../ports/profile_data_port';
-import { ICreateAccount, UsecaseResponse } from './interface.account';
+import { UsecaseResponse } from './interfaces/interface';
+import { ICreateAccount } from './interfaces/interface.account';
 
 export default class AccountUsecases {
   constructor(
     private readonly accountDataPort: IAccountDataPort,
-    private readonly profileDataPort: IProfileDataPort
+    private readonly profileDataPort: IProfileDataPort,
+    private readonly loginDataPort: ILoginDataPort
   ) {}
 
   public async createAccount({
@@ -65,24 +68,6 @@ export default class AccountUsecases {
     };
   }
 
-  public async isAccountLogged(id: string): Promise<UsecaseResponse<boolean>> {
-    try {
-      return {
-        succeed: true,
-        response: await this.accountDataPort.isLoggedIn(id),
-      };
-    } catch (e) {
-      const error: Error = e as Error;
-      console.log(
-        `[ERROR] Account was not able to be created! ${error.message}`
-      );
-      return {
-        succeed: false,
-        errors: error.message,
-      };
-    }
-  }
-
   public async loginAccount(
     accountId: string,
     password: string
@@ -99,7 +84,7 @@ export default class AccountUsecases {
         errors: `Invalid password for account with id ${accountId}`,
       };
 
-    const sessionId = await this.accountDataPort.logIn(accountId);
+    const sessionId = await this.loginDataPort.logIn(accountId);
     return {
       succeed: true,
       response: sessionId,

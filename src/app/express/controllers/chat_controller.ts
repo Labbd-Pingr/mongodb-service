@@ -5,7 +5,7 @@ import ChatUsecases from '../../../domain/usecases/chat';
 import {
   ICreateChat,
   ISendMessage,
-} from '../../../domain/usecases/interface.chat';
+} from '../../../domain/usecases/interfaces/interface.chat';
 
 export default class ChatController {
   private readonly _router: Router;

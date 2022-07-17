@@ -2,7 +2,10 @@ import { Router, Request, Response } from 'express';
 import { Db } from 'mongodb';
 import PostDataAdapter from '../../adapters/post_data_adapter';
 import PostUsecases from '../../../domain/usecases/post';
-import { ICreatePost, ISharePost } from 'src/domain/usecases/interface.post';
+import {
+  ICreatePost,
+  ISharePost,
+} from 'src/domain/usecases/interfaces/interface.post';
 import Post from 'src/domain/model/post';
 import { Query } from 'src/domain/ports/post_data_port';
 import Neo4jRepository from 'src/app/neo4j/neo4j_repository';

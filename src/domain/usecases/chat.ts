@@ -1,7 +1,7 @@
 import Chat from '../model/chat';
 import IChatDataPort from '../ports/chat_data_port';
 import { v4 } from 'uuid';
-import { ICreateChat, ISendMessage } from './interface.chat';
+import { ICreateChat, ISendMessage } from './interfaces/interface.chat';
 
 export default class ChatUsecases {
   constructor(protected readonly chatDataPort: IChatDataPort) {}

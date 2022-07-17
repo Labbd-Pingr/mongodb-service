@@ -1,6 +1,6 @@
 import Post from '../model/post';
 import IPostDataPort, { Query } from '../ports/post_data_port';
-import { ICreatePost, ISharePost } from './interface.post';
+import { ICreatePost, ISharePost } from './interfaces/interface.post';
 import { v4 } from 'uuid';
 import Profile from '../model/profile';
 
@@ -45,7 +45,7 @@ export default class PostUsecases {
       return this.postDataPort.likePost(post, profile);
     }
 
-    return 0
+    return 0;
   }
 
   public async deletePostById(id: string) {

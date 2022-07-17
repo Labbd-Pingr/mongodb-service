@@ -5,12 +5,14 @@ import AccountUsecases from '../../../domain/usecases/account';
 import RedisRepository from '../../redis/redis_repository';
 import Neo4jRepository from '../../neo4j/neo4j_repository';
 import ProfileDataAdapter from '../../adapters/profile_data_adapter';
-import { ICreateAccount } from 'src/domain/usecases/interface.account';
-import Account from '../../../domain/model/account';
+import { ICreateAccount } from '../../../domain/usecases/interfaces/interface.account';
+import LoginDataAdapter from '../../adapters/login_data_adapater';
+import SessionUsecases from '../../../domain/usecases/session';
 
 export default class AccountController {
   private readonly _router: Router;
-  private accountUsecases: AccountUsecases;
+  private readonly accountUsecases: AccountUsecases;
+  private readonly sessionUsecases: SessionUsecases;
 
   constructor(
     postgres: DataSource,
@@ -19,9 +21,12 @@ export default class AccountController {
   ) {
     this._router = Router();
     this.accountUsecases = new AccountUsecases(
-      new AccountDataAdapter(postgres, neo4j, redis),
-      new ProfileDataAdapter(postgres)
+      new AccountDataAdapter(postgres, neo4j),
+      new ProfileDataAdapter(postgres),
+      new LoginDataAdapter(redis)
     );
+
+    this.sessionUsecases = new SessionUsecases(new LoginDataAdapter(redis));
     this.mapRoutes();
   }
 
@@ -45,7 +50,9 @@ export default class AccountController {
 
   private async isAccountLogged(req: Request, resp: Response) {
     const accountId = req.params.id;
-    const usecaseResp = await this.accountUsecases.isAccountLogged(accountId);
+    const usecaseResp = await this.sessionUsecases.DoesAccountHaveAValidSession(
+      accountId
+    );
     if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
     else resp.sendStatus(500);
   }
@@ -53,7 +60,6 @@ export default class AccountController {
   private async loginAccount(req: Request, resp: Response) {
     const accountId = req.params.id;
     const password = req.body.password;
-    console.log('SENHA:' + password);
     const usecaseResp = await this.accountUsecases.loginAccount(
       accountId,
       password

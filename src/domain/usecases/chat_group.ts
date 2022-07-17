@@ -1,7 +1,7 @@
 import ChatGroup from '../model/chat_group';
 import IChatGroupDataPort from '../ports/chat_group_data_port';
 import { v4 } from 'uuid';
-import { ICreateGroupChat } from './interface.group_chat';
+import { ICreateGroupChat } from './interfaces/interface.group_chat';
 import ChatUsecases from './chat';
 
 export default class ChatGroupUsecases extends ChatUsecases {

@@ -1,6 +1,6 @@
 import Profile from '../model/profile';
 import IProfileDataPort, { ProfileQuery } from '../ports/profile_data_port';
-import { IUpdateProfile } from './interface.profile';
+import { IUpdateProfile } from './interfaces/interface.profile';
 
 export default class ProfileUsecases {
   constructor(private readonly profileDataPort: IProfileDataPort) {}

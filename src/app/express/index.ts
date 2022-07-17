@@ -11,6 +11,7 @@ import ProfileController from './controllers/profile_controller';
 import AccountController from './controllers/account_controller';
 import ChatController from './controllers/chat_controller';
 import PostController from './controllers/post_controller';
+import AuthController from './controllers/auth_controller';
 import Neo4jRepository from '../neo4j/neo4j_repository';
 import RedisRepository from '../redis/redis_repository';
 import { DataSource } from 'typeorm';
@@ -36,12 +37,14 @@ async function setup() {
     neo4j,
     redis
   );
+  const authController: AuthController = new AuthController(redis);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
   app.use('/profiles', profileController.router);
   app.use('/accounts', accountController.router);
+  app.use('/auth', authController.router);
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
 }

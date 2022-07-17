@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import ProfileDataAdapter from '../../adapters/profile_data_adapter';
-import { IUpdateProfile } from '../../../domain/usecases/interface.profile';
+import { IUpdateProfile } from '../../../domain/usecases/interfaces/interface.profile';
 import { ProfileQuery } from '../../../domain/ports/profile_data_port';
 import ProfileUsecases from '../../../domain/usecases/profile';
 import Profile from '../../../domain/model/profile';
