@@ -20,25 +20,32 @@ export default class ChatGroupDataAdapter implements IChatGroupDataPort {
     chat: ChatGroup,
     message: Message
   ): Promise<string | undefined> {
-    const updatedChat = await this.groupChatCollection.updateOne(
+    const updateResult = await this.groupChatCollection.updateOne(
       { id: chat.id },
       { $push: { messages: message } }
     );
 
-    return updatedChat.upsertedId.toString();
+    const updatedChats = await this.get({ id: chat.id });
+
+    if (updatedChats.length == 0) return undefined;
+    return updatedChats[0].id;
   }
 
   public async addGroupUser(
     chat: ChatGroup,
     id: string
   ): Promise<string | undefined> {
-    const updatedChat = await this.groupChatCollection.updateOne(
+    const updatedResult = await this.groupChatCollection.updateOne(
       {
         id: chat.id,
       },
       { $push: { accountIds: id } }
     );
-    return updatedChat.upsertedId.toString();
+
+    const updatedChats = await this.get({ id: chat.id });
+
+    if (updatedChats.length == 0) return undefined;
+    return updatedChats[0].id;
   }
 
   public async get(query: ChatGroupQuery): Promise<ChatGroup[]> {
@@ -49,6 +56,7 @@ export default class ChatGroupDataAdapter implements IChatGroupDataPort {
           ? new ChatGroup(
               chat.id,
               chat.accountIds,
+              chat.messages,
               chat.ownerAccountId,
               chat.isPrivate,
               chat.token
@@ -56,6 +64,7 @@ export default class ChatGroupDataAdapter implements IChatGroupDataPort {
           : new ChatGroup(
               chat.id,
               chat.accountIds,
+              chat.messages,
               chat.ownerAccountId,
               chat.isPrivate
             );

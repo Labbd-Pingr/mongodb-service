@@ -17,9 +17,16 @@ export default class ChatGroupUsecases {
 
     if (isPrivate) {
       const token = v4();
-      chat = new ChatGroup(id, accountIds, ownerAccountId, isPrivate, token);
+      chat = new ChatGroup(
+        id,
+        accountIds,
+        [],
+        ownerAccountId,
+        isPrivate,
+        token
+      );
     } else {
-      chat = new ChatGroup(id, accountIds, ownerAccountId, isPrivate);
+      chat = new ChatGroup(id, accountIds, [], ownerAccountId, isPrivate);
     }
     const dbId = await this.chatDataPort.saveChat(chat);
     if (dbId == undefined) {

@@ -292,12 +292,132 @@
               "description": "OK - Chat"
             }
         }
-      },
-      "put":{
-        "summary": "Add User"
       }
     },
-    "/groups": {},
-    "/groups/{id}": {}
+    "/groups": {
+      "post": {
+        "summary": "Create new chat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "accountIds",
+                  "ownerAccountId",
+                  "isPrivate"
+                ],
+                "properties": {
+                  "accountIds": {
+                    "type": "array",
+                    "items": ["accountId1", "accountId2"]
+                  },
+                  "ownerAccountId": {
+                    "type": "string"
+                  },
+                  "isPrivate": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK - Created"
+          }
+        }
+      }
+    },
+    "/groups/{id}": {
+      "get":{
+        "summary": "Get Chat By Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK - Chat"
+            }
+        }
+      },
+      "post":{
+        "summary": "Send Message",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string"
+          }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "senderId",
+                    "text"
+                  ],
+                  "properties": {
+                    "senderId": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK - Chat"
+            }
+        }
+      },
+      "put":{
+        "summary": "Add User",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string"
+          }],
+        "requestBody":{
+          "required": true,
+          "content":{
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "accountId",
+                  "chatToken"
+                ],
+                "properties": {
+                  "accountId": {
+                    "type": "string"
+                  },
+                  "chatToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK user added"
+          }
+        }
+      }
+    }
   }
 }

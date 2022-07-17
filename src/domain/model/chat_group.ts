@@ -1,15 +1,16 @@
 import InvalidToken from '../exceptions/invalid_token';
-import Chat from './chat';
+import Chat, { Message } from './chat';
 
 export default class ChatGroup extends Chat {
   constructor(
     id: string,
     accountIds: string[],
+    messages: Message[],
     public ownerAccountId: string,
     public isPrivate: boolean,
     public token: string = ''
   ) {
-    super(id, accountIds);
+    super(id, accountIds, messages);
   }
 
   public addUser(accountId: string, token: string) {
