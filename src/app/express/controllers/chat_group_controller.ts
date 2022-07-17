@@ -50,8 +50,17 @@ export default class ChatGroupController {
     else resp.sendStatus(400);
   }
 
+  private async getChatById(req: Request, resp: Response) {
+    const chatID = req.params.id;
+    const chat = await this.chatGroupUsecases.getChatById(chatID);
+
+    if (chat) resp.status(200).json(chat);
+    else resp.sendStatus(400);
+  }
+
   private mapRoutes() {
     this._router.post('/', this.createChat.bind(this));
+    this._router.get('/:id', this.getChatById.bind(this));
     this._router.post('/:id', this.sendMessage.bind(this));
     this._router.put('/:id', this.addUser.bind(this));
   }
