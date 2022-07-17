@@ -10,9 +10,15 @@ export class Message {
 
 export default class Chat {
   public readonly messages: Message[];
-  constructor(public readonly id: string, public accountIds: string[]) {
+  constructor(
+    public readonly id: string,
+    public accountIds: string[],
+    messages?: Message[]
+  ) {
     this.accountIds.sort();
-    this.messages = [];
+
+    if (messages) this.messages = messages;
+    else this.messages = [];
   }
 
   public sendMessage(senderId: string, text: string): Message {
