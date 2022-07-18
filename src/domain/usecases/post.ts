@@ -1,19 +1,20 @@
 import Post from '../model/post';
 import IPostDataPort, { Query } from '../ports/post_data_port';
-import { ICreatePost, ISharePost } from './interfaces/interface.post';
+import { ICreatePost, IInteractionWithPost } from './interfaces/interface.post';
 import { v4 } from 'uuid';
 
 export default class PostUsecases {
   constructor(private readonly postDataPort: IPostDataPort) {}
 
-  public async sharePost({
-    accountId,
-    text,
-    sharedPostId,
-  }: ISharePost): Promise<string | null> {
+  public async interactWithPost(
+    { accountId, text, sharedPostId }: IInteractionWithPost,
+    interactionType: string
+  ): Promise<string | null> {
     const createdPostId = await this.createPost({ accountId, text });
     if (createdPostId) {
-      this.postDataPort.sharePost(createdPostId, sharedPostId);
+      if (interactionType == 'SHARE')
+        this.postDataPort.sharePost(createdPostId, sharedPostId);
+      else this.postDataPort.replyToPost(createdPostId, sharedPostId);
     }
     return null;
   }

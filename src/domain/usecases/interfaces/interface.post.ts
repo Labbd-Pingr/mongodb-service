@@ -3,7 +3,7 @@ export interface ICreatePost {
   text: string;
 }
 
-export interface ISharePost {
+export interface IInteractionWithPost {
   accountId: string;
   text: string;
   sharedPostId: string;

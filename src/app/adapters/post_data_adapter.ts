@@ -35,6 +35,17 @@ export default class PostDataAdapter implements IPostDataPort {
     return 1;
   }
 
+  public async replyToPost(
+    createdPostId: string,
+    sharedPostId: string
+  ): Promise<number> {
+    await this.neo4j.runCommand(
+      'MATCH (p1: post), (p2: post) WHERE p1.postId = $postId AND p2.postId = $sharedPostId CREATE (p1)-[:REPLY]->(p2)',
+      { postId: createdPostId, sharedPostId: sharedPostId }
+    );
+    return 1;
+  }
+
   public async likePost(post: Post, accountId: string): Promise<number> {
     await this.neo4j.runCommand(
       'MATCH (u:user), (p:post) WHERE u.accountId = $accountId AND p.postId = $postId CREATE (u)-[r:LIKE]->(p)',

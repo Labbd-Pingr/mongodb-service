@@ -2,7 +2,7 @@ import { Router, Request, Response, response } from 'express';
 import PostUsecases from '../../../domain/usecases/post';
 import {
   ICreatePost,
-  ISharePost,
+  IInteractionWithPost,
 } from 'src/domain/usecases/interfaces/interface.post';
 import Post from 'src/domain/model/post';
 import { Query } from 'src/domain/ports/post_data_port';
@@ -58,12 +58,25 @@ export default class PostController {
   private async sharePost(req: Request, resp: Response) {
     const id = req.params.id;
     const inputBody: ICreatePost = req.body as ICreatePost;
-    const input: ISharePost = {
+    const input: IInteractionWithPost = {
       accountId: inputBody.accountId,
       text: inputBody.text,
       sharedPostId: id,
     };
-    const createdId = this.postUsecases.sharePost(input);
+    const createdId = this.postUsecases.interactWithPost(input, 'SHARE');
+    if (createdId != null) resp.sendStatus(201);
+    else resp.sendStatus(400);
+  }
+
+  private async replyToPost(req: Request, resp: Response) {
+    const id = req.params.id;
+    const inputBody: ICreatePost = req.body as ICreatePost;
+    const input: IInteractionWithPost = {
+      accountId: inputBody.accountId,
+      text: inputBody.text,
+      sharedPostId: id,
+    };
+    const createdId = this.postUsecases.interactWithPost(input, 'REPLY');
     if (createdId != null) resp.sendStatus(201);
     else resp.sendStatus(400);
   }
@@ -90,5 +103,6 @@ export default class PostController {
     this._router.delete('/:id', this.deletePostById.bind(this));
     this._router.put('/:id/like', this.likePost.bind(this));
     this._router.put('/:id/share', this.sharePost.bind(this));
+    this._router.put('/:id/reply', this.replyToPost.bind(this));
   }
 }
