@@ -17,6 +17,10 @@ import RedisRepository from '../redis/redis_repository';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
 import { exit } from 'process';
+import PostDataAdapter from '../adapters/post_data_adapter';
+import LoginDataAdapter from '../adapters/login_data_adapater';
+import PostUsecases from '../../domain/usecases/post';
+import SessionUsecases from '../../domain/usecases/session';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -29,7 +33,13 @@ async function setup() {
   postgres = await setupPostgres();
   neo4j = await setupNeo4j();
   redis = await setupRedis();
-  const postController: PostController = new PostController(mongo, neo4j);
+  const postDataAdapter = new PostDataAdapter(mongo, neo4j);
+  const postUseCase = new PostUsecases(postDataAdapter);
+  const sessionUsecases = new SessionUsecases(new LoginDataAdapter(redis));
+  const postController: PostController = new PostController(
+    postUseCase,
+    sessionUsecases
+  );
   const chatController: ChatController = new ChatController(mongo);
   const profileController: ProfileController = new ProfileController(postgres);
   const accountController: AccountController = new AccountController(

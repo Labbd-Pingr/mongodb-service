@@ -1,5 +1,4 @@
 import { Collection, Db, DeleteResult } from 'mongodb';
-import Profile from 'src/domain/model/profile';
 import Post from '../../domain/model/post';
 import IPostDataPort, { Query } from '../../domain/ports/post_data_port';
 import Neo4jRepository from '../neo4j/neo4j_repository';
@@ -18,6 +17,10 @@ export default class PostDataAdapter implements IPostDataPort {
     await this.neo4j.runCommand('CREATE (:post {postId: $id})', {
       id: post.id,
     });
+    await this.neo4j.runCommand(
+      'MATCH (u:user), (p:post) WHERE u.accountId = $accountId AND p.postId = $postId CREATE (u)-[:PUBLISH]->(p)',
+      { accountId: post.accountId.toString(), postId: post.id }
+    );
     return savedPost.insertedId.toString();
   }
 
@@ -32,13 +35,10 @@ export default class PostDataAdapter implements IPostDataPort {
     return 1;
   }
 
-  public async likePost(post: Post, profile: Profile): Promise<number> {
-    // Usar o id do profile aqui
-    const profileId = 1;
-
+  public async likePost(post: Post, accountId: string): Promise<number> {
     await this.neo4j.runCommand(
-      'MATCH (p:profile), (p:post) WHERE p.profileId = $profileId AND p.postId = $postId CREATE (u)-[r:LIKE]->(p)',
-      { profileId: profileId, postId: post.id }
+      'MATCH (u:user), (p:post) WHERE u.accountId = $accountId AND p.postId = $postId CREATE (u)-[r:LIKE]->(p)',
+      { accountId: accountId.toString(), postId: post.id }
     );
     return 1;
   }

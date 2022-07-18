@@ -1,10 +1,10 @@
 export interface ICreatePost {
-  profileId: string;
+  accountId: string;
   text: string;
 }
 
 export interface ISharePost {
-  profileId: string;
+  accountId: string;
   text: string;
   sharedPostId: string;
 }

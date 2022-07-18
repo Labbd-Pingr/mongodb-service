@@ -13,7 +13,7 @@ export default class Post {
 
   constructor(
     public readonly id: string,
-    public readonly profileId: string,
+    public readonly accountId: string,
     public readonly datetime: Date,
     text: string
   ) {

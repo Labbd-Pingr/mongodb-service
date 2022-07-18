@@ -2,17 +2,16 @@ import Post from '../model/post';
 import IPostDataPort, { Query } from '../ports/post_data_port';
 import { ICreatePost, ISharePost } from './interfaces/interface.post';
 import { v4 } from 'uuid';
-import Profile from '../model/profile';
 
 export default class PostUsecases {
   constructor(private readonly postDataPort: IPostDataPort) {}
 
   public async sharePost({
-    profileId,
+    accountId,
     text,
     sharedPostId,
   }: ISharePost): Promise<string | null> {
-    const createdPostId = await this.createPost({ profileId, text });
+    const createdPostId = await this.createPost({ accountId, text });
     if (createdPostId) {
       this.postDataPort.sharePost(createdPostId, sharedPostId);
     }
@@ -20,12 +19,12 @@ export default class PostUsecases {
   }
 
   public async createPost({
-    profileId,
+    accountId,
     text,
   }: ICreatePost): Promise<string | null> {
     try {
       const id = v4();
-      const post: Post = new Post(id, profileId, new Date(), text || '');
+      const post: Post = new Post(id, accountId, new Date(), text || '');
       const dbId = await this.postDataPort.savePost(post);
       if (dbId == undefined) throw new Error();
       return id;
@@ -36,15 +35,11 @@ export default class PostUsecases {
     }
   }
 
-  public async likePost(id: string, profileId: string) {
+  public async likePost(id: string, accountId: string) {
     const post = await this.getPostById(id);
-    // Procurar por usuário
-    const profile = new Profile('Alfredo Goldman');
-
     if (post) {
-      return this.postDataPort.likePost(post, profile);
+      return this.postDataPort.likePost(post, accountId);
     }
-
     return 0;
   }
 

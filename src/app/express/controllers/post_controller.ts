@@ -1,6 +1,4 @@
-import { Router, Request, Response } from 'express';
-import { Db } from 'mongodb';
-import PostDataAdapter from '../../adapters/post_data_adapter';
+import { Router, Request, Response, response } from 'express';
 import PostUsecases from '../../../domain/usecases/post';
 import {
   ICreatePost,
@@ -8,15 +6,17 @@ import {
 } from 'src/domain/usecases/interfaces/interface.post';
 import Post from 'src/domain/model/post';
 import { Query } from 'src/domain/ports/post_data_port';
-import Neo4jRepository from 'src/app/neo4j/neo4j_repository';
+import SessionUsecases from 'src/domain/usecases/session';
 
 export default class PostController {
   private readonly _router: Router;
   private postUsecases: PostUsecases;
+  private sessionUsecases: SessionUsecases;
 
-  constructor(db: Db, neo4j: Neo4jRepository) {
+  constructor(postUsecases: PostUsecases, sessionUsecases: SessionUsecases) {
     this._router = Router();
-    this.postUsecases = new PostUsecases(new PostDataAdapter(db, neo4j));
+    this.postUsecases = postUsecases;
+    this.sessionUsecases = sessionUsecases;
     this.mapRoutes();
   }
 
@@ -39,6 +39,10 @@ export default class PostController {
 
   private async createPost(req: Request, resp: Response) {
     const input: ICreatePost = req.body as ICreatePost;
+    // const sessionId = req.headers['sessionId']
+    //   ? req.headers['sessionId'].toString()
+    //   : '';
+    // this.validateSession(sessionId);
     const id = await this.postUsecases.createPost(input);
     if (id != null) resp.status(201).json(id);
     else resp.sendStatus(400);
@@ -46,8 +50,8 @@ export default class PostController {
 
   private async likePost(req: Request, resp: Response) {
     const postId = req.params.id;
-    const userId = 1;
-    this.postUsecases.likePost(postId, userId.toString());
+    const accountId = req.body['accountId'];
+    this.postUsecases.likePost(postId, accountId);
     resp.sendStatus(200);
   }
 
@@ -55,7 +59,7 @@ export default class PostController {
     const id = req.params.id;
     const inputBody: ICreatePost = req.body as ICreatePost;
     const input: ISharePost = {
-      profileId: inputBody.profileId,
+      accountId: inputBody.accountId,
       text: inputBody.text,
       sharedPostId: id,
     };
@@ -68,6 +72,15 @@ export default class PostController {
     const postId = req.params.id;
     this.postUsecases.deletePostById(postId);
     resp.sendStatus(200);
+  }
+
+  private async validateSession(sessionId: string): Promise<any> {
+    const result = await this.sessionUsecases.getAndValidateSession(sessionId);
+    if (result.succeed) {
+      return;
+    }
+
+    return response.sendStatus(401);
   }
 
   private mapRoutes() {
