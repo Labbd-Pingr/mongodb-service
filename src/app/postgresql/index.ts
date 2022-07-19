@@ -1,6 +1,7 @@
 import { exit } from 'process';
 import { DataSource } from 'typeorm';
 import { AccountModel } from './model/account';
+import { HashtagModel } from './model/hashtag';
 import { ProfileModel } from './model/profile';
 
 export default async (): Promise<DataSource> => {
@@ -10,7 +11,7 @@ export default async (): Promise<DataSource> => {
     password: process.env.POSTGRES_PASSWORD,
     host: 'postgres',
     database: process.env.POSTGRES_USER || 'postgres',
-    entities: [ProfileModel, AccountModel],
+    entities: [ProfileModel, AccountModel, HashtagModel],
     synchronize: true,
   });
 
