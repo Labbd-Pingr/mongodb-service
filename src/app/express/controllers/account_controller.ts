@@ -69,10 +69,22 @@ export default class AccountController {
     else resp.status(400).json(usecaseResp.errors);
   }
 
+  private async logoutAccount(req: Request, resp: Response) {
+    const accountId = req.params.id;
+    const session = req.body.session;
+    const usecaseResp = await this.accountUsecases.logoutAccount(
+      accountId,
+      session
+    );
+    if (usecaseResp.succeed) resp.sendStatus(200);
+    else resp.status(401).json(usecaseResp.errors);
+  }
+
   private mapRoutes() {
     this._router.post('/', this.createAccount.bind(this));
     this._router.get('/:id', this.getAccountById.bind(this));
     this._router.get('/:id/auth', this.isAccountLogged.bind(this));
     this._router.post('/:id/auth', this.loginAccount.bind(this));
+    this._router.post('/:id/logout', this.logoutAccount.bind(this));
   }
 }

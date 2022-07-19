@@ -57,6 +57,7 @@ async function setup() {
   app.use('/auth', authController.router);
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
+  app.get('/', (_, resp) => resp.redirect('/api'));
 }
 
 async function init() {

@@ -90,4 +90,27 @@ export default class AccountUsecases {
       response: sessionId,
     };
   }
+
+  public async logoutAccount(accountId: string, sessionId: string) {
+    if (!(await this.loginDataPort.isAValidSession(sessionId)))
+      return {
+        succeed: false,
+        errors: `Session id ${sessionId} is invalid!`,
+      };
+
+    const sessionAccount = await this.loginDataPort.getAccountBySession(
+      sessionId
+    );
+
+    if (sessionAccount != accountId)
+      return {
+        succeed: false,
+        errors: 'You are not the owner of this session!',
+      };
+
+    await this.loginDataPort.logout(sessionId);
+    return {
+      succeed: true,
+    };
+  }
 }

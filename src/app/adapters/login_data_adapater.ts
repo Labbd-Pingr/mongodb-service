@@ -45,4 +45,8 @@ export default class LoginDataAdapter implements ILoginDataPort {
 
     return session.entityId;
   }
+
+  public async logout(sessionId: string): Promise<void> {
+    await this.accountRepository.remove(sessionId);
+  }
 }

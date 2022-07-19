@@ -3,4 +3,5 @@ export default interface ILoginDataPort {
   isAValidSession: (sessionId: string) => Promise<boolean>;
   getAccountBySession: (sessionId: string) => Promise<string>;
   logIn: (accountId: string) => Promise<string>;
+  logout: (sessionId: string) => Promise<void>;
 }
