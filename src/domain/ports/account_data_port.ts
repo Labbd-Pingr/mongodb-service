@@ -1,4 +1,5 @@
 import Account from '../model/account';
+import Profile from '../model/profile';
 
 export interface AccountQuery {
   id?: string;

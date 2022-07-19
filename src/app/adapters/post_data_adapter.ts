@@ -1,4 +1,5 @@
 import { Collection, Db, DeleteResult } from 'mongodb';
+import PostWithInteractions from '../../domain/model/postWithInteractions';
 import Post from '../../domain/model/post';
 import IPostDataPort, { Query } from '../../domain/ports/post_data_port';
 import Neo4jRepository from '../neo4j/neo4j_repository';
@@ -70,5 +71,54 @@ export default class PostDataAdapter implements IPostDataPort {
         return new Post(post.id, post.profileId, post.datetime, post.text.text);
       })
       .toArray();
+  }
+
+  public async getWithInteractions(
+    query: Query
+  ): Promise<PostWithInteractions[]> {
+    const postsDocuments = await this.postCollection.find(query);
+
+    const postWithInteractions: PostWithInteractions[] = [];
+    const posts = await postsDocuments
+      .map((post) => {
+        return new Post(post.id, post.profileId, post.datetime, post.text.text);
+      })
+      .toArray();
+    for (const post of posts) {
+      const withInteractions = new PostWithInteractions(
+        post,
+        await this.getRepliesTo(post.id),
+        await this.getSharedBy(post.id)
+      );
+      postWithInteractions.push(withInteractions);
+    }
+    return postWithInteractions;
+  }
+
+  private async getRepliesTo(postId: string): Promise<Post[]> {
+    const result = await this.neo4j.runCommand(
+      'MATCH (p1: post) -[:REPLY]-> (p2: post) WHERE p2.postId = $postId return p1.postId as postId',
+      { postId }
+    );
+
+    const posts: Post[] = [];
+    result.records.forEach(async (record) => {
+      const reply = await this.get({ id: record.get('postId') });
+      posts.push(reply[0]);
+    });
+
+    return posts;
+  }
+
+  private async getSharedBy(postId: string): Promise<Post | null> {
+    const result = await this.neo4j.runCommand(
+      'MATCH (p1: post) -[:SHARE]-> (p2: post) WHERE p1.postId = $postId return p2.postId as postId',
+      { postId }
+    );
+    const sharedPost = result.records[0]
+      ? (await this.get({ id: result.records[0].get('postId') }))[0]
+      : null;
+
+    return sharedPost;
   }
 }

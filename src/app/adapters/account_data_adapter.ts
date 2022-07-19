@@ -39,7 +39,10 @@ export default class AccountDataAdapter implements IAccountDataPort {
     const id = convertedAccount.id.toString();
 
     //Add to neo4j
-    this.neo4jRepository.runCommand('CREATE (:user {accountId: $id})', { id });
+    this.neo4jRepository.runCommand(
+      'CREATE (:user {accountId: $id, profileId: $profileId})',
+      { id, profileId: profileId }
+    );
     return id;
   }
 
@@ -55,7 +58,7 @@ export default class AccountDataAdapter implements IAccountDataPort {
     };
 
     const accounts: AccountModel[] = await this.accountRepositoryPostgres.find(
-      convertedQuery as FindManyOptions<Account>
+      convertedQuery as FindManyOptions<AccountModel>
     );
 
     return accounts.map((account) => this.convertAppAccountToDomain(account));
@@ -91,6 +94,7 @@ export default class AccountDataAdapter implements IAccountDataPort {
       profile.birthDate
     );
 
+    convertedProfile.id = profile.id.toString();
     return convertedProfile;
   }
 }

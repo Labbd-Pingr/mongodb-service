@@ -2,6 +2,7 @@ import Post from '../model/post';
 import IPostDataPort, { Query } from '../ports/post_data_port';
 import { ICreatePost, IInteractionWithPost } from './interfaces/interface.post';
 import { v4 } from 'uuid';
+import PostWithInteractions from '../model/postWithInteractions';
 
 export default class PostUsecases {
   constructor(private readonly postDataPort: IPostDataPort) {}
@@ -51,6 +52,19 @@ export default class PostUsecases {
 
   public async getPostById(id: string): Promise<Post | null> {
     const posts = await this.postDataPort.get({ id });
+    if (posts.length == 0) {
+      console.log(`[ERROR] Could not get post with id ${id}`);
+      return null;
+    }
+
+    return posts[0];
+  }
+
+  public async getPostWithInteractionsById(
+    id: string
+  ): Promise<PostWithInteractions | null> {
+    const posts = await this.postDataPort.getWithInteractions({ id });
+    console.log('no usecase', posts);
     if (posts.length == 0) {
       console.log(`[ERROR] Could not get post with id ${id}`);
       return null;

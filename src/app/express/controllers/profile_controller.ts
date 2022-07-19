@@ -5,14 +5,22 @@ import { ProfileQuery } from '../../../domain/ports/profile_data_port';
 import ProfileUsecases from '../../../domain/usecases/profile';
 import Profile from '../../../domain/model/profile';
 import { DataSource } from 'typeorm';
+import AccountDataAdapter from '../../adapters/account_data_adapter';
+import Neo4jRepository from '../../neo4j/neo4j_repository';
+import LoginDataAdapter from '../../adapters/login_data_adapater';
+import RedisRepository from '../../redis/redis_repository';
 
 export default class ProfileController {
   private readonly _router: Router;
   private profileUsecases: ProfileUsecases;
 
-  constructor(db: DataSource) {
+  constructor(db: DataSource, neo4j: Neo4jRepository, redis: RedisRepository) {
     this._router = Router();
-    this.profileUsecases = new ProfileUsecases(new ProfileDataAdapter(db));
+    this.profileUsecases = new ProfileUsecases(
+      new ProfileDataAdapter(db, neo4j),
+      new AccountDataAdapter(db, neo4j),
+      new LoginDataAdapter(redis)
+    );
     this.mapRoutes();
   }
 
@@ -55,10 +63,23 @@ export default class ProfileController {
     else resp.sendStatus(400);
   }
 
+  private async followOrUnfollow(req: Request, resp: Response) {
+    const accountId = req.params.id;
+    const session = req.body.session;
+
+    const usecaseResp = await this.profileUsecases.followOrUnfollow(
+      session,
+      accountId
+    );
+    if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
+    else resp.status(400).json(usecaseResp.errors);
+  }
+
   private mapRoutes() {
     this._router.get('/', this.getProfileByQuery.bind(this));
     this._router.get('/usernames', this.getProfileByUsernameMatch.bind(this));
     this._router.get('/:id', this.getProfileById.bind(this));
     this._router.patch('/:id', this.updateProfile.bind(this));
+    this._router.post('/:id/relationship', this.followOrUnfollow.bind(this));
   }
 }

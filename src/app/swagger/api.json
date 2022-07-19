@@ -239,6 +239,91 @@
         }
       }
     },
+    "/profiles/{id}": {
+      "get": {
+        "summary": "Get profile by Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Profile"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "TODO"
+      }
+    },
+    "/profiles/usernames": {
+      "get": {
+        "summary": "Get profiles by username",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "username",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Profiles"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/profiles/{id}/relationship": {
+      "post": {
+        "summary": "Follow or unfollow specific profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "session"
+                ],
+                "properties": {
+                  "session": {
+                    "type": "string",
+                    "format": "session"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK - Action played"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/posts": {
       "get": {
         "summary": "Get posts",
@@ -295,6 +380,25 @@
       }
     },
     "/posts/{id}": {
+      "get": {
+        "summary": "Get post with interactions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post with interactinos"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
       "delete": {
         "summary": "Delete a post",
         "parameters": [
