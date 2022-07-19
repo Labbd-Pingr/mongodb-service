@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { Db } from 'mongodb';
 import ChatGroupUsecases from '../../../domain/usecases/chat_group';
-import { ISendMessage } from '../../../domain/usecases/interface.chat';
+import { ISendMessage } from '../../../domain/usecases/interfaces/interface.chat';
 import ChatGroupDataAdapter from '../../adapters/chat_group_data_adapter';
 import {
   IAddUser,
   ICreateGroupChat,
-} from 'src/domain/usecases/interface.group_chat';
+} from '../../../domain/usecases/interfaces/interface.group_chat';
 
 export default class ChatGroupController {
   private readonly _router: Router;
