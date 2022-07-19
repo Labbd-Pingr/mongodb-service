@@ -1,21 +1,15 @@
-import { runInThisContext } from 'vm';
 import Profile from '../model/profile';
 import IAccountDataPort from '../ports/account_data_port';
-import ILoginDataPort from '../ports/login_data_port';
 import IProfileDataPort, { ProfileQuery } from '../ports/profile_data_port';
+import AutheticationUsecases from './auth';
 import { UsecaseResponse } from './interfaces/interface';
 import { IUpdateProfile } from './interfaces/interface.profile';
-import SessionUsecases from './session';
 
 export default class ProfileUsecases {
-  private readonly sessionUsecases: SessionUsecases;
   constructor(
     private readonly profileDataPort: IProfileDataPort,
-    private readonly accountDataPort: IAccountDataPort,
-    loginDataPort: ILoginDataPort
-  ) {
-    this.sessionUsecases = new SessionUsecases(loginDataPort);
-  }
+    private readonly accountDataPort: IAccountDataPort
+  ) {}
 
   public async getProfileById(id: string): Promise<Profile | null> {
     const profiles = await this.profileDataPort.get({ id });
@@ -64,16 +58,16 @@ export default class ProfileUsecases {
     }
   }
 
+  @AutheticationUsecases.authorize()
   public async followOrUnfollow(
     sessionId: string,
     profileId: string
   ): Promise<UsecaseResponse<string>> {
-    const authResponse = await this.sessionUsecases.getAndValidateSession(
-      sessionId
-    );
-    if (!authResponse.succeed) return authResponse;
-
-    const accountId = authResponse.response;
+    const accountId = await (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(
+        sessionId
+      )
+    ).response;
     const accounts = await this.accountDataPort.get({ id: accountId });
 
     if (accounts.length == 0)
@@ -97,5 +91,60 @@ export default class ProfileUsecases {
         response: `Follow user with id ${profileId}`,
       };
     }
+  }
+
+  @AutheticationUsecases.authorize()
+  public async block(
+    sessionId: string,
+    profileId: string
+  ): Promise<UsecaseResponse<void>> {
+    const accountId = await (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(
+        sessionId
+      )
+    ).response;
+    const accounts = await this.accountDataPort.get({ id: accountId });
+
+    if (accounts.length == 0)
+      return {
+        succeed: false,
+        errors: 'Internal Error',
+      };
+
+    const profile = accounts[0].profile;
+
+    await this.profileDataPort.unfollow(profile.id, profileId);
+    await this.profileDataPort.unfollow(profileId, profile.id);
+
+    await this.profileDataPort.block(profile.id, profileId);
+    return {
+      succeed: true,
+    };
+  }
+
+  @AutheticationUsecases.authorize()
+  public async unblock(
+    sessionId: string,
+    profileId: string
+  ): Promise<UsecaseResponse<void>> {
+    const accountId = await (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(
+        sessionId
+      )
+    ).response;
+    const accounts = await this.accountDataPort.get({ id: accountId });
+
+    if (accounts.length == 0)
+      return {
+        succeed: false,
+        errors: 'Internal Error',
+      };
+
+    const profile = accounts[0].profile;
+
+    await this.profileDataPort.unblock(profile.id, profileId);
+    return {
+      succeed: true,
+    };
   }
 }

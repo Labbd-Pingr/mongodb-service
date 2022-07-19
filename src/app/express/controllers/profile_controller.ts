@@ -7,19 +7,16 @@ import Profile from '../../../domain/model/profile';
 import { DataSource } from 'typeorm';
 import AccountDataAdapter from '../../adapters/account_data_adapter';
 import Neo4jRepository from '../../neo4j/neo4j_repository';
-import LoginDataAdapter from '../../adapters/login_data_adapater';
-import RedisRepository from '../../redis/redis_repository';
 
 export default class ProfileController {
   private readonly _router: Router;
   private profileUsecases: ProfileUsecases;
 
-  constructor(db: DataSource, neo4j: Neo4jRepository, redis: RedisRepository) {
+  constructor(db: DataSource, neo4j: Neo4jRepository) {
     this._router = Router();
     this.profileUsecases = new ProfileUsecases(
       new ProfileDataAdapter(db, neo4j),
-      new AccountDataAdapter(db, neo4j),
-      new LoginDataAdapter(redis)
+      new AccountDataAdapter(db, neo4j)
     );
     this.mapRoutes();
   }
@@ -64,14 +61,32 @@ export default class ProfileController {
   }
 
   private async followOrUnfollow(req: Request, resp: Response) {
-    const accountId = req.params.id;
+    const profileId = req.params.id;
     const session = req.body.session;
 
     const usecaseResp = await this.profileUsecases.followOrUnfollow(
       session,
-      accountId
+      profileId
     );
     if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
+    else resp.status(400).json(usecaseResp.errors);
+  }
+
+  private async block(req: Request, resp: Response) {
+    const profileId = req.params.id;
+    const session = req.body.session;
+
+    const usecaseResp = await this.profileUsecases.block(session, profileId);
+    if (usecaseResp.succeed) resp.sendStatus(200);
+    else resp.status(400).json(usecaseResp.errors);
+  }
+
+  private async unblock(req: Request, resp: Response) {
+    const profileId = req.params.id;
+    const session = req.body.session;
+
+    const usecaseResp = await this.profileUsecases.unblock(session, profileId);
+    if (usecaseResp.succeed) resp.sendStatus(200);
     else resp.status(400).json(usecaseResp.errors);
   }
 
@@ -81,5 +96,7 @@ export default class ProfileController {
     this._router.get('/:id', this.getProfileById.bind(this));
     this._router.patch('/:id', this.updateProfile.bind(this));
     this._router.post('/:id/relationship', this.followOrUnfollow.bind(this));
+    this._router.post('/:id/block', this.block.bind(this));
+    this._router.post('/:id/unblock', this.unblock.bind(this));
   }
 }

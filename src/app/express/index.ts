@@ -8,6 +8,7 @@ import setupMongo from '../mongodb/index';
 import setupNeo4j from '../neo4j/index';
 import setupRedis from '../redis/index';
 import ChatGroupController from './controllers/chat_group_controller';
+import HashtagController from './controllers/hashtag_controller';
 import ProfileController from './controllers/profile_controller';
 import AccountController from './controllers/account_controller';
 import ChatController from './controllers/chat_controller';
@@ -18,9 +19,9 @@ import RedisRepository from '../redis/redis_repository';
 import { DataSource } from 'typeorm';
 import { Db } from 'mongodb';
 import { exit } from 'process';
-import PostDataAdapter from '../adapters/post_data_adapter';
-import PostUsecases from '../../domain/usecases/post';
-import HashtagController from './controllers/hashtag_controller';
+import SessionUsecases from '../../domain/usecases/session';
+import AutheticationUsecases from '../../domain/usecases/auth';
+import LoginDataAdapter from '../adapters/login_data_adapater';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -33,17 +34,14 @@ async function setup() {
   postgres = await setupPostgres();
   neo4j = await setupNeo4j();
   redis = await setupRedis();
-  const postDataAdapter = new PostDataAdapter(mongo, neo4j);
-  const postUseCase = new PostUsecases(postDataAdapter);
-  const postController: PostController = new PostController(postUseCase);
+  const postController: PostController = new PostController(mongo, neo4j);
   const chatController: ChatController = new ChatController(mongo);
   const groupChatController: ChatGroupController = new ChatGroupController(
     mongo
   );
   const profileController: ProfileController = new ProfileController(
     postgres,
-    neo4j,
-    redis
+    neo4j
   );
   const accountController: AccountController = new AccountController(
     postgres,
@@ -51,6 +49,9 @@ async function setup() {
     redis
   );
   const authController: AuthController = new AuthController(redis);
+  AutheticationUsecases.setAuthetication(
+    new SessionUsecases(new LoginDataAdapter(redis))
+  );
 
   const hashtagController: HashtagController = new HashtagController(postgres);
 

@@ -1,20 +1,23 @@
 import { Router, Request, Response } from 'express';
+import { Db } from 'mongodb';
 import PostUsecases from '../../../domain/usecases/post';
 import {
   ICreatePost,
   IInteractionWithPost,
-} from 'src/domain/usecases/interfaces/interface.post';
-import Post from 'src/domain/model/post';
-import { Query } from 'src/domain/ports/post_data_port';
-import PostWithInteractions from 'src/domain/model/postWithInteractions';
+} from '../../../domain/usecases/interfaces/interface.post';
+import Post from '../../../domain/model/post';
+import { Query } from '../../../domain/ports/post_data_port';
+import PostWithInteractions from '../../../domain/model/postWithInteractions';
+import Neo4jRepository from '../../neo4j/neo4j_repository';
+import PostDataAdapter from '../../adapters/post_data_adapter';
 
 export default class PostController {
   private readonly _router: Router;
   private postUsecases: PostUsecases;
 
-  constructor(postUsecases: PostUsecases) {
+  constructor(mongo: Db, neo4j: Neo4jRepository) {
     this._router = Router();
-    this.postUsecases = postUsecases;
+    this.postUsecases = new PostUsecases(new PostDataAdapter(mongo, neo4j));
     this.mapRoutes();
   }
 

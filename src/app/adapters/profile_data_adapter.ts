@@ -89,6 +89,24 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     );
   }
 
+  public async block(profileId1: string, profileId2: string): Promise<void> {
+    await this.neo4jRepository.runCommand(
+      'MATCH (u1:user), (u2:user) \
+      WHERE u1.profileId = $profileId1 AND u2.profileId = $profileId2 \
+      CREATE (u1) - [:BLOCK] -> (u2)',
+      { profileId1, profileId2 }
+    );
+  }
+
+  public async unblock(profileId1: string, profileId2: string): Promise<void> {
+    await this.neo4jRepository.runCommand(
+      'MATCH (u1:user) - [rel:BLOCK] -> (u2:user) \
+      WHERE u1.profileId = $profileId1 AND u2.profileId = $profileId2 \
+      DELETE rel',
+      { profileId1, profileId2 }
+    );
+  }
+
   private convertDomainToApp(profile: Profile): ProfileModel {
     const convertedProfile = new ProfileModel();
     convertedProfile.username = profile.username;

@@ -17,4 +17,6 @@ export default interface IProfileDataPort {
   doesFollow: (profileId1: string, profileId2: string) => Promise<boolean>;
   follow: (profileId1: string, profileId2: string) => Promise<void>;
   unfollow: (profileId1: string, profileId2: string) => Promise<void>;
+  block: (profileId1: string, profileId2: string) => Promise<void>;
+  unblock: (profileId1: string, profileId2: string) => Promise<void>;
 }

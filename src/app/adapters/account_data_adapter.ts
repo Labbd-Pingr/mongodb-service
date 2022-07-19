@@ -41,7 +41,7 @@ export default class AccountDataAdapter implements IAccountDataPort {
     //Add to neo4j
     this.neo4jRepository.runCommand(
       'CREATE (:user {accountId: $id, profileId: $profileId})',
-      { id, profileId: profileId }
+      { id, profileId }
     );
     return id;
   }
