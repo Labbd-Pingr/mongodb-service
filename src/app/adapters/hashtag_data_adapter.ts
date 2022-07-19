@@ -5,20 +5,20 @@ import IHashtagDataPort, {
 import { HashtagModel } from '../postgresql/model/hashtag';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
-export default class ProfileDataAdapter implements IHashtagDataPort {
-  private profileRepository: Repository<HashtagModel>;
+export default class HashtagDataAdapter implements IHashtagDataPort {
+  private hashtagRepository: Repository<HashtagModel>;
   constructor(db: DataSource) {
-    this.profileRepository = db.getRepository('hashtag');
+    this.hashtagRepository = db.getRepository('hashtag');
   }
 
   public async create(profile: Hashtag): Promise<Hashtag> {
     let convertedHashtag = this.convertDomainToApp(profile);
-    convertedHashtag = await this.profileRepository.save(convertedHashtag);
+    convertedHashtag = await this.hashtagRepository.save(convertedHashtag);
     return convertedHashtag;
   }
 
   public async get(query: HashtagQuery): Promise<Hashtag[]> {
-    const hashtags: HashtagModel[] = await this.profileRepository.findBy(
+    const hashtags: HashtagModel[] = await this.hashtagRepository.findBy(
       query as FindOptionsWhere<Hashtag>
     );
 
@@ -32,7 +32,7 @@ export default class ProfileDataAdapter implements IHashtagDataPort {
 
   public async update(hashtag: Hashtag): Promise<Hashtag> {
     let convertedHashtag: HashtagModel = this.convertDomainToApp(hashtag);
-    convertedHashtag = await this.profileRepository.save(convertedHashtag);
+    convertedHashtag = await this.hashtagRepository.save(convertedHashtag);
     return convertedHashtag;
   }
 

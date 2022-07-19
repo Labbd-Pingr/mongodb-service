@@ -20,6 +20,7 @@ import { Db } from 'mongodb';
 import { exit } from 'process';
 import PostDataAdapter from '../adapters/post_data_adapter';
 import PostUsecases from '../../domain/usecases/post';
+import HashtagController from './controllers/hashtag_controller';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -51,6 +52,8 @@ async function setup() {
   );
   const authController: AuthController = new AuthController(redis);
 
+  const hashtagController: HashtagController = new HashtagController(postgres);
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
@@ -61,6 +64,7 @@ async function setup() {
   app.use('/chats', chatController.router);
   app.get('/', (_, resp) => resp.redirect('/api'));
   app.use('/groups', groupChatController.router);
+  app.use('/hashtags', hashtagController.router);
 }
 
 async function init() {
