@@ -2,6 +2,8 @@ import FutureDateError from '../exceptions/future_date';
 import InvalidUsernameError from '../exceptions/invalid_username';
 
 export default class Profile {
+  public id!: string;
+
   constructor(
     public username: string,
     public name: string = username,

@@ -4,11 +4,15 @@ import IProfileDataPort, {
 } from '../../domain/ports/profile_data_port';
 import { ProfileModel } from '../postgresql/model/profile';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
+import Neo4jRepository from '../neo4j/neo4j_repository';
 
 export default class ProfileDataAdapter implements IProfileDataPort {
-  private profileRepository: Repository<ProfileModel>;
-  constructor(db: DataSource) {
+  private readonly profileRepository: Repository<ProfileModel>;
+  private readonly neo4jRepository: Neo4jRepository;
+
+  constructor(db: DataSource, neo4j: Neo4jRepository) {
     this.profileRepository = db.getRepository('profile');
+    this.neo4jRepository = neo4j;
   }
 
   public async create(profile: Profile): Promise<string> {
@@ -24,7 +28,7 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     };
 
     const profiles: ProfileModel[] = await this.profileRepository.findBy(
-      convertedQuery as FindOptionsWhere<Profile>
+      convertedQuery as FindOptionsWhere<ProfileModel>
     );
 
     return profiles.map((profile) => this.convertAppToDomain(profile));
@@ -51,6 +55,38 @@ export default class ProfileDataAdapter implements IProfileDataPort {
   public async deleteById(id: string): Promise<boolean> {
     const result = await this.profileRepository.delete(parseInt(id));
     return result.affected == 1;
+  }
+
+  public async doesFollow(
+    profileId1: string,
+    profileId2: string
+  ): Promise<boolean> {
+    const result = await this.neo4jRepository.runCommand(
+      'MATCH (u1:user) - [rel:FOLLOW] -> (u2:user) \
+      WHERE u1.profileId = $profileId1 AND u2.profileId = $profileId2 \
+      return rel',
+      { profileId1, profileId2 }
+    );
+
+    return result.records.length != 0;
+  }
+
+  public async follow(profileId1: string, profileId2: string): Promise<void> {
+    await this.neo4jRepository.runCommand(
+      'MATCH (u1:user), (u2:user) \
+      WHERE u1.profileId = $profileId1 AND u2.profileId = $profileId2 \
+      CREATE (u1) - [:FOLLOW] -> (u2)',
+      { profileId1, profileId2 }
+    );
+  }
+
+  public async unfollow(profileId1: string, profileId2: string): Promise<void> {
+    await this.neo4jRepository.runCommand(
+      'MATCH (u1:user) - [rel:FOLLOW] -> (u2:user) \
+      WHERE u1.profileId = $profileId1 AND u2.profileId = $profileId2 \
+      DELETE rel',
+      { profileId1, profileId2 }
+    );
   }
 
   private convertDomainToApp(profile: Profile): ProfileModel {

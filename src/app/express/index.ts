@@ -45,7 +45,11 @@ async function setup() {
   const groupChatController: ChatGroupController = new ChatGroupController(
     mongo
   );
-  const profileController: ProfileController = new ProfileController(postgres);
+  const profileController: ProfileController = new ProfileController(
+    postgres,
+    neo4j,
+    redis
+  );
   const accountController: AccountController = new AccountController(
     postgres,
     neo4j,
