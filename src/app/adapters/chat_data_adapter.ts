@@ -9,7 +9,9 @@ export default class ChatDataAdapter implements IChatDataPort {
   }
 
   public async saveChat(chat: Chat): Promise<string | undefined> {
+    console.log(chat);
     const savedChat = await this.chatCollection.insertOne(chat);
+    console.log(await this.chatCollection.findOne());
     return savedChat.insertedId.toString();
   }
 
@@ -17,19 +19,25 @@ export default class ChatDataAdapter implements IChatDataPort {
     chat: Chat,
     message: Message
   ): Promise<string | undefined> {
-    const updatedChat = await this.chatCollection.updateOne(
+    const updateResult = await this.chatCollection.updateOne(
       { id: chat.id },
-      { $push: { messages: message } }
+      {
+        $push: { messages: message },
+      }
     );
 
-    return updatedChat.upsertedId.toString();
+    const updatedChats = await this.get({ id: chat.id });
+
+    if (updatedChats.length == 0) return undefined;
+    return updatedChats[0].id;
   }
 
   public async get(query: Query): Promise<Chat[]> {
     const chats = await this.chatCollection.find(query);
+
     return chats
       .map((chat) => {
-        return new Chat(chat.id, chat.accountIds);
+        return new Chat(chat.id, chat.accountIds, chat.messages);
       })
       .toArray();
   }

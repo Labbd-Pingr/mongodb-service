@@ -27,6 +27,7 @@ export default class ChatUsecases {
 
       const chat = chats[0];
       const message = chat.sendMessage(senderId, text);
+
       const dbId = await this.chatDataPort.addChatMessage(chat, message);
       if (dbId == undefined) throw new Error();
       return true;
@@ -58,7 +59,7 @@ export default class ChatUsecases {
   public async getChatById(chatId: string): Promise<Chat | null> {
     try {
       const chats = await this.chatDataPort.get({ id: chatId });
-
+      console.log(chatId, chats, 'aaaaaaah');
       if (chats.length == 0) throw new Error('Chat does not exist!');
 
       const chat = chats[0];
