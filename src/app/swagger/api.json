@@ -295,51 +295,12 @@
       }
     },
     "/posts/{id}": {
-<<<<<<< HEAD
       "delete": {
         "summary": "Delete a post",
-=======
-      "get": {},
-      "delete": {}
-    },
-    "/chats": {
-      "post": {
-        "summary": "Create new chat",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "accountIds"
-                ],
-                "properties": {
-                  "accountIds": {
-                    "type": "array",
-                    "items": ["accountId1", "accountId2"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "OK - Created"
-          }
-        }
-      }
-    },
-    "/chats/{id}": {
-      "get":{
-        "summary": "Get Chat By Id",
->>>>>>> origin/sóqueromeformar
         "parameters": [
           {
             "in": "path",
             "name": "id",
-<<<<<<< HEAD
             "type": "string",
             "required": true
           }
@@ -477,49 +438,93 @@
           },
           "400": {
             "description": "Bad Request"
-=======
-            "type": "string"
-          }],
-          "responses": {
-            "200": {
-              "description": "OK - Chat"
+          }
+        }
+      }
+    },
+    "/chats": {
+      "post": {
+        "summary": "Create new chat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "accountIds"
+                ],
+                "properties": {
+                  "accountIds": {
+                    "type": "array",
+                    "items": [
+                      "accountId1",
+                      "accountId2"
+                    ]
+                  }
+                }
+              }
             }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK - Created"
+          }
+        }
+      }
+    },
+    "/chats/{id}": {
+      "get": {
+        "summary": "Get Chat By Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Chat"
+          }
         }
       },
-      "post":{
+      "post": {
         "summary": "Send Message",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "type": "string"
-          }],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "senderId",
-                    "text"
-                  ],
-                  "properties": {
-                    "senderId": {
-                      "type": "string"
-                    },
-                    "text": {
-                      "type": "string"
-                    }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "senderId",
+                  "text"
+                ],
+                "properties": {
+                  "senderId": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
                   }
                 }
               }
             }
-          },
-          "responses": {
-            "200": {
-              "description": "OK - Chat"
-            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK - Chat"
+          }
         }
       }
     },
@@ -540,7 +545,10 @@
                 "properties": {
                   "accountIds": {
                     "type": "array",
-                    "items": ["accountId1", "accountId2"]
+                    "items": [
+                      "accountId1",
+                      "accountId2"
+                    ]
                   },
                   "ownerAccountId": {
                     "type": "string"
@@ -561,67 +569,70 @@
       }
     },
     "/groups/{id}": {
-      "get":{
+      "get": {
         "summary": "Get Chat By Id",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "type": "string"
-          }],
-          "responses": {
-            "200": {
-              "description": "OK - Chat"
-            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Chat"
+          }
         }
       },
-      "post":{
+      "post": {
         "summary": "Send Message",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "type": "string"
-          }],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "senderId",
-                    "text"
-                  ],
-                  "properties": {
-                    "senderId": {
-                      "type": "string"
-                    },
-                    "text": {
-                      "type": "string"
-                    }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "senderId",
+                  "text"
+                ],
+                "properties": {
+                  "senderId": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
                   }
                 }
               }
             }
-          },
-          "responses": {
-            "200": {
-              "description": "OK - Chat"
-            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK - Chat"
+          }
         }
       },
-      "put":{
+      "put": {
         "summary": "Add User",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "type": "string"
-          }],
-        "requestBody":{
+          }
+        ],
+        "requestBody": {
           "required": true,
-          "content":{
+          "content": {
             "application/json": {
               "schema": {
                 "type": "object",
@@ -644,7 +655,6 @@
         "responses": {
           "200": {
             "description": "OK user added"
->>>>>>> origin/sóqueromeformar
           }
         }
       }
