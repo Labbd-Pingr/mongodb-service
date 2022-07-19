@@ -27,7 +27,7 @@ export default class ProfileDataAdapter implements IHashtagDataPort {
     );
     mappedHashtags.sort((a, b) => b.dailyCounter - a.dailyCounter);
 
-    return mappedHashtags;
+    return mappedHashtags.slice(0, 10);
   }
 
   public async update(hashtag: Hashtag): Promise<Hashtag> {
