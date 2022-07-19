@@ -6,16 +6,16 @@ import RedisRepository from '../redis/redis_repository';
 const SESSION_LIFETIME_IN_DAYS = 1;
 
 export default class LoginDataAdapter implements ILoginDataPort {
-  private readonly accountRepository: Repository<AccountModel>;
+  private readonly sessionRepository: Repository<AccountModel>;
 
   constructor(redis: RedisRepository) {
-    this.accountRepository = redis.getAccountRepository();
+    this.sessionRepository = redis.getSessionRepository();
   }
 
   public async doesAccountHaveAValidSession(
     accountId: string
   ): Promise<boolean> {
-    const sessions = await this.accountRepository
+    const sessions = await this.sessionRepository
       .search()
       .where('accountId')
       .equals(accountId)
@@ -26,19 +26,19 @@ export default class LoginDataAdapter implements ILoginDataPort {
   }
 
   public async isAValidSession(sessionId: string): Promise<boolean> {
-    const session = await this.accountRepository.fetch(sessionId);
+    const session = await this.sessionRepository.fetch(sessionId);
     return (
       session.expirationDate != null && session.expirationDate > Date.now()
     );
   }
 
   public async getAccountBySession(sessionId: string): Promise<string> {
-    const session = await this.accountRepository.fetch(sessionId);
+    const session = await this.sessionRepository.fetch(sessionId);
     return session.accountId;
   }
 
   public async logIn(accountId: string): Promise<string> {
-    const session = await this.accountRepository.createAndSave({
+    const session = await this.sessionRepository.createAndSave({
       accountId,
       expirationDate: Date.now() + SESSION_LIFETIME_IN_DAYS,
     });
@@ -47,6 +47,6 @@ export default class LoginDataAdapter implements ILoginDataPort {
   }
 
   public async logout(sessionId: string): Promise<void> {
-    await this.accountRepository.remove(sessionId);
+    await this.sessionRepository.remove(sessionId);
   }
 }
