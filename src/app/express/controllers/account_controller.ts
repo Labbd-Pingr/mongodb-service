@@ -22,7 +22,7 @@ export default class AccountController {
     this._router = Router();
     this.accountUsecases = new AccountUsecases(
       new AccountDataAdapter(postgres, neo4j),
-      new ProfileDataAdapter(postgres),
+      new ProfileDataAdapter(postgres, neo4j),
       new LoginDataAdapter(redis)
     );
 

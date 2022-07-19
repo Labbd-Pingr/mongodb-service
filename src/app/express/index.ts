@@ -7,6 +7,7 @@ import setupPostgres from '../postgresql/index';
 import setupMongo from '../mongodb/index';
 import setupNeo4j from '../neo4j/index';
 import setupRedis from '../redis/index';
+import ChatGroupController from './controllers/chat_group_controller';
 import ProfileController from './controllers/profile_controller';
 import AccountController from './controllers/account_controller';
 import ChatController from './controllers/chat_controller';
@@ -35,7 +36,14 @@ async function setup() {
   const postUseCase = new PostUsecases(postDataAdapter);
   const postController: PostController = new PostController(postUseCase);
   const chatController: ChatController = new ChatController(mongo);
-  const profileController: ProfileController = new ProfileController(postgres);
+  const groupChatController: ChatGroupController = new ChatGroupController(
+    mongo
+  );
+  const profileController: ProfileController = new ProfileController(
+    postgres,
+    neo4j,
+    redis
+  );
   const accountController: AccountController = new AccountController(
     postgres,
     neo4j,
@@ -52,6 +60,7 @@ async function setup() {
   app.use('/posts', postController.router);
   app.use('/chats', chatController.router);
   app.get('/', (_, resp) => resp.redirect('/api'));
+  app.use('/groups', groupChatController.router);
 }
 
 async function init() {

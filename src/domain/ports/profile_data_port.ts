@@ -14,4 +14,7 @@ export default interface IProfileDataPort {
   getByUsernameMatch: (username: string) => Promise<Profile[]>;
   update: (id: string, profile: Profile) => Promise<string | undefined>;
   deleteById: (id: string) => Promise<boolean>;
+  doesFollow: (profileId1: string, profileId2: string) => Promise<boolean>;
+  follow: (profileId1: string, profileId2: string) => Promise<void>;
+  unfollow: (profileId1: string, profileId2: string) => Promise<void>;
 }

@@ -1,13 +1,11 @@
 import ChatGroup from '../model/chat_group';
 import IChatGroupDataPort from '../ports/chat_group_data_port';
 import { v4 } from 'uuid';
-import { ICreateGroupChat } from './interfaces/interface.group_chat';
-import ChatUsecases from './chat';
+import { IAddUser, ICreateGroupChat } from './interfaces/interface.group_chat';
+import { ISendMessage } from './interfaces/interface.chat';
 
-export default class ChatGroupUsecases extends ChatUsecases {
-  constructor(chatDataPort: IChatGroupDataPort) {
-    super(chatDataPort);
-  }
+export default class ChatGroupUsecases {
+  constructor(protected readonly chatDataPort: IChatGroupDataPort) {}
 
   public async createChat({
     accountIds,
@@ -19,9 +17,16 @@ export default class ChatGroupUsecases extends ChatUsecases {
 
     if (isPrivate) {
       const token = v4();
-      chat = new ChatGroup(id, accountIds, ownerAccountId, isPrivate, token);
+      chat = new ChatGroup(
+        id,
+        accountIds,
+        [],
+        ownerAccountId,
+        isPrivate,
+        token
+      );
     } else {
-      chat = new ChatGroup(id, accountIds, ownerAccountId, isPrivate);
+      chat = new ChatGroup(id, accountIds, [], ownerAccountId, isPrivate);
     }
     const dbId = await this.chatDataPort.saveChat(chat);
     if (dbId == undefined) {
@@ -31,19 +36,19 @@ export default class ChatGroupUsecases extends ChatUsecases {
     return id;
   }
 
-  public async addUser(userId: string, chatToken: string): Promise<boolean> {
+  public async addUser(
+    chatId: string,
+    { accountId, chatToken }: IAddUser
+  ): Promise<boolean> {
     try {
-      const chats = await (this.chatDataPort as IChatGroupDataPort).get({
-        token: chatToken,
+      const chats = await this.chatDataPort.get({
+        id: chatId,
       });
       if (chats.length == 0) throw new Error('Chat does not exist!');
 
       const chat = chats[0];
-      chat.addUser(userId);
-      const dbId = await (this.chatDataPort as IChatGroupDataPort).addGroupUser(
-        chat,
-        userId
-      );
+      chat.addUser(accountId, chatToken);
+      const dbId = await this.chatDataPort.addGroupUser(chat, accountId);
 
       if (dbId == undefined) throw new Error();
 
@@ -52,6 +57,63 @@ export default class ChatGroupUsecases extends ChatUsecases {
       const error: Error = e as Error;
       console.log(`[ERROR] User was not able to be added! ${error.message}`);
       return false;
+    }
+  }
+
+  public async sendMessage(
+    chatId: string,
+    { senderId, text }: ISendMessage
+  ): Promise<boolean> {
+    try {
+      const chats = await this.chatDataPort.get({ id: chatId });
+      if (chats.length == 0) throw new Error('Chat does not exist!');
+
+      const chat = chats[0];
+      const message = chat.sendMessage(senderId, text);
+      const dbId = await this.chatDataPort.addChatMessage(chat, message);
+      if (dbId == undefined) throw new Error();
+      return true;
+    } catch (e) {
+      const error: Error = e as Error;
+      console.log(`[ERROR] Message was not able to be sent! ${error.message}`);
+      return false;
+    }
+  }
+
+  public async getChatByAccountIds(
+    accountIds: string[]
+  ): Promise<ChatGroup | null> {
+    try {
+      accountIds.sort();
+      const chats = await this.chatDataPort.get({ accountIds: accountIds });
+
+      if (chats.length == 0) throw new Error('Chat does not exist!');
+
+      const chat = chats[0];
+      return chat;
+    } catch (e) {
+      const error: Error = e as Error;
+      console.log(
+        `[ERROR] Chat was not able to be retrieved! ${error.message}`
+      );
+      return null;
+    }
+  }
+
+  public async getChatById(chatId: string): Promise<ChatGroup | null> {
+    try {
+      const chats = await this.chatDataPort.get({ id: chatId });
+
+      if (chats.length == 0) throw new Error('Chat does not exist!');
+
+      const chat = chats[0];
+      return chat;
+    } catch (e) {
+      const error: Error = e as Error;
+      console.log(
+        `[ERROR] Chat was not able to be retrieved! ${error.message}`
+      );
+      return null;
     }
   }
 }
