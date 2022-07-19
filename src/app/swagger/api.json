@@ -295,6 +295,25 @@
       }
     },
     "/posts/{id}": {
+      "get": {
+        "summary": "Get post with interactions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post with interactinos"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
       "delete": {
         "summary": "Delete a post",
         "parameters": [

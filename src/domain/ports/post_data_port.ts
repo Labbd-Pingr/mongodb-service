@@ -1,5 +1,5 @@
 import Post from '../model/post';
-import Profile from '../model/profile';
+import PostWithInteractions from '../model/postWithInteractions';
 
 export interface Query {
   profileId?: string;
@@ -13,4 +13,5 @@ export default interface IPostDataPort {
   replyToPost: (createdPostId: string, sharedPostId: string) => Promise<number>;
   delete: (query: Query) => Promise<number>;
   get: (query: Query) => Promise<Post[]>;
+  getWithInteractions: (query: Query) => Promise<PostWithInteractions[]>;
 }
