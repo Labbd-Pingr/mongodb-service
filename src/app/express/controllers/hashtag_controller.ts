@@ -5,7 +5,7 @@ import HashtagDataAdapter from '../../adapters/hashtag_data_adapter';
 
 export default class HashtagController {
   private readonly _router: Router;
-  private hashtagUsecases: HashtagUsecases;
+  public hashtagUsecases: HashtagUsecases;
 
   constructor(db: DataSource) {
     this._router = Router();

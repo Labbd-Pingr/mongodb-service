@@ -3,9 +3,13 @@ import IPostDataPort, { Query } from '../ports/post_data_port';
 import { ICreatePost, IInteractionWithPost } from './interfaces/interface.post';
 import { v4 } from 'uuid';
 import PostWithInteractions from '../model/postWithInteractions';
+import HashtagUsecases from './hashtag';
 
 export default class PostUsecases {
-  constructor(private readonly postDataPort: IPostDataPort) {}
+  constructor(
+    private readonly postDataPort: IPostDataPort,
+    private readonly hashtagUsecases: HashtagUsecases
+  ) {}
 
   public async interactWithPost(
     { accountId, text, sharedPostId }: IInteractionWithPost,
@@ -29,6 +33,12 @@ export default class PostUsecases {
       const post: Post = new Post(id, accountId, new Date(), text || '');
       const dbId = await this.postDataPort.savePost(post);
       if (dbId == undefined) throw new Error();
+
+      if (post.text)
+        post.text?.hashtags.forEach((hashtag) =>
+          this.hashtagUsecases.updateOrCreateHashtag(hashtag)
+        );
+
       return id;
     } catch (e) {
       const error: Error = e as Error;
