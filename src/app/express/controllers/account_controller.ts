@@ -72,12 +72,8 @@ export default class AccountController {
   }
 
   private async logoutAccount(req: Request, resp: Response) {
-    const accountId = req.params.id;
     const session = req.body.session;
-    const usecaseResp = await this.accountUsecases.logoutAccount(
-      accountId,
-      session
-    );
+    const usecaseResp = await this.sessionUsecases.deleteSession(session);
     if (usecaseResp.succeed) resp.sendStatus(200);
     else resp.status(401).json(usecaseResp.errors);
   }
@@ -87,6 +83,6 @@ export default class AccountController {
     this._router.get('/:id', this.getAccountById.bind(this));
     this._router.get('/:id/auth', this.isAccountLogged.bind(this));
     this._router.post('/:id/auth', this.loginAccount.bind(this));
-    this._router.post('/:id/logout', this.logoutAccount.bind(this));
+    this._router.post('/logout', this.logoutAccount.bind(this));
   }
 }

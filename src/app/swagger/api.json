@@ -63,7 +63,7 @@
     },
     "/accounts/{id}": {
       "get": {
-        "summary": "Get account by Id",
+        "summary": "Gets account by Id",
         "parameters": [
           {
             "in": "path",
@@ -84,7 +84,7 @@
     },
     "/accounts/{id}/auth": {
       "get": {
-        "summary": "Check if an account is logged",
+        "summary": "Checks if a specific account is logged",
         "parameters": [
           {
             "in": "path",
@@ -103,7 +103,7 @@
         }
       },
       "post": {
-        "summary": "Log in specific account",
+        "summary": "Logs in a specific account",
         "parameters": [
           {
             "in": "path",
@@ -141,17 +141,9 @@
         }
       }
     },
-    "/accounts/{id}/logout": {
+    "/accounts/logout": {
       "post": {
-        "summary": "Logout a specific account with a specific session",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "summary": "Logs out a specific account",
         "requestBody": {
           "required": true,
           "content": {

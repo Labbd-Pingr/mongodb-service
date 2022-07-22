@@ -26,6 +26,7 @@ Este repositório contém o código da API do Pingr-- em conjunto com uma docume
 Crie um arquivo `.env` a partir do arquivo `.env.sample`
 
 > **Warning**
+>
 > Caso decida alterar a porta padrão, você irá precisar alterar os arquivos `Dockerfile` e `docker-compose.yml`.
 
 Na primeira vez que for executar o projeto, rode na raiz:
@@ -50,6 +51,11 @@ A API estará rodando em `localhost:<Port>`.
   - Dados do perfil: nome, username (começado por @), biografia, data de nascimento e email.
   - Dados de autenticação: email e senha.
   - Ao se cadastrar, o sistema irá gerar um ID único para aquele usuário, para este poder recuperar os seus dados de perfil sempre que necessário.
+
+- O sistema deve permitir o login e desconexão de usuários cadastrados.
+  - Após a autenticação ser bem sucedida, o sistema deve armazenar os dados da sessão do usuário.
+  - O usuário deve possuir uma sessão válida para usar o sistema.
+  - Caso a sua sessão esteja expirada, é necessário realizar o login novamente.
 
 ## Modelagens
 

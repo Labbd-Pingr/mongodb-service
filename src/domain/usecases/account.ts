@@ -56,7 +56,6 @@ export default class AccountUsecases {
   public async getAccountById(id: string): Promise<UsecaseResponse<Account>> {
     const accounts = await this.accountDataPort.get({ id });
     if (accounts.length == 0) {
-      console.log(`[ERROR] Could not get account with id ${id}`);
       return {
         succeed: false,
         errors: 'Not Found',
@@ -89,29 +88,6 @@ export default class AccountUsecases {
     return {
       succeed: true,
       response: sessionId,
-    };
-  }
-
-  public async logoutAccount(accountId: string, sessionId: string) {
-    if (!(await this.loginDataPort.isAValidSession(sessionId)))
-      return {
-        succeed: false,
-        errors: `Session id ${sessionId} is invalid!`,
-      };
-
-    const sessionAccount = await this.loginDataPort.getAccountBySession(
-      sessionId
-    );
-
-    if (sessionAccount != accountId)
-      return {
-        succeed: false,
-        errors: 'You are not the owner of this session!',
-      };
-
-    await this.loginDataPort.logout(sessionId);
-    return {
-      succeed: true,
     };
   }
 }

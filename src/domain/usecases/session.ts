@@ -1,4 +1,5 @@
 import ILoginDataPort from '../ports/login_data_port';
+import AutheticationUsecases from './auth';
 import { UsecaseResponse } from './interfaces/interface';
 
 export default class SessionUsecases {
@@ -38,6 +39,14 @@ export default class SessionUsecases {
     return {
       succeed: true,
       response: await this.loginDataPort.getAccountBySession(sessionId),
+    };
+  }
+
+  @AutheticationUsecases.authorize()
+  public async deleteSession(session: string): Promise<UsecaseResponse<void>> {
+    await this.loginDataPort.logout(session);
+    return {
+      succeed: true,
     };
   }
 }
