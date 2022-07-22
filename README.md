@@ -59,7 +59,7 @@ A API estará rodando em `localhost:<Port>`.
   <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="githubLogo" width="28px" height="28px"> [@lealdaniel](https://github.com/lealdaniel)
 
 - **Thiago Guerrero**:
-  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="githubLogo" width="28px" height="28px"> [@tgbalera](https://github.com/tgbalera)
+  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="githubLogo" width="28px" height="28px"> [@T-Guerrero](https://github.com/T-Guerrero)
 
 - **Vinicius Pereira Ximenes Frota**:
   <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="githubLogo" width="28px" height="28px"> [@viniciuspxf](https://github.com/viniciuspxf)
