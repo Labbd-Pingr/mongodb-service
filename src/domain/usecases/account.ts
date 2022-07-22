@@ -20,22 +20,22 @@ export default class AccountUsecases {
     name,
     bio,
     birthDate,
-  }: ICreateAccount): Promise<UsecaseResponse<string>> {
-    let profileDbId = '0',
-      accountDbId = '0';
+  }: ICreateAccount): Promise<UsecaseResponse<Account>> {
+    let profileDbId = '0';
+    let account;
     try {
       const profile: Profile = new Profile(username, name, bio, birthDate);
-      const account: Account = new Account(email, password, profile);
+      account = new Account(email, password, profile);
 
       profileDbId = await this.profileDataPort.create(profile);
       if (!profileDbId) throw new Error('[INTERNAL ERROR]');
 
-      accountDbId = await this.accountDataPort.create(account, profileDbId);
-      if (!accountDbId) throw new Error('[INTERNAL ERROR]');
+      account = await this.accountDataPort.create(account, profileDbId);
+      if (!account) throw new Error('[INTERNAL ERROR]');
 
       return {
         succeed: true,
-        response: accountDbId,
+        response: account,
       };
     } catch (e) {
       const error: Error = e as Error;
@@ -44,7 +44,8 @@ export default class AccountUsecases {
       );
 
       await this.profileDataPort.deleteById(profileDbId);
-      await this.accountDataPort.deleteById(accountDbId);
+      if (account && account.id)
+        await this.accountDataPort.deleteById(account.id);
       return {
         succeed: false,
         errors: error.message,

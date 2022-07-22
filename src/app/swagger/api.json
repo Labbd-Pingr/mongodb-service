@@ -13,7 +13,7 @@
   "paths": {
     "/accounts": {
       "post": {
-        "summary": "Create a new account",
+        "summary": "Creates a new account",
         "requestBody": {
           "required": true,
           "content": {
@@ -53,7 +53,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created - Account Id"
+            "description": "Created - Account"
           },
           "400": {
             "description": "Bad Request"

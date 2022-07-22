@@ -22,6 +22,7 @@ import { exit } from 'process';
 import SessionUsecases from '../../domain/usecases/session';
 import AutheticationUsecases from '../../domain/usecases/auth';
 import LoginDataAdapter from '../adapters/login_data_adapater';
+import path from 'path';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -61,7 +62,15 @@ async function setup() {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
+  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(
+    '/api',
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerDoc, {
+      customfavIcon: '/favicon.ico',
+      customSiteTitle: 'Pingr-- API',
+    })
+  );
   app.use('/profiles', profileController.router);
   app.use('/accounts', accountController.router);
   app.use('/auth', authController.router);

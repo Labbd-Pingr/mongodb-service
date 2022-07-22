@@ -19,14 +19,14 @@ export default class AccountDataAdapter implements IAccountDataPort {
     this.neo4jRepository = neo4j;
   }
 
-  public async create(account: Account, profileId: string): Promise<string> {
+  public async create(account: Account, profileId: string): Promise<Account> {
     const profiles = await this.profileRepositoryPostgres.findBy({
       id: parseInt(profileId),
     });
 
     if (profiles.length == 0)
       throw new Error(
-        `[INTERNAL ERROR] Profile with id ${profileId} was not able to be fetched!`
+        `Profile with id ${profileId} was not able to be fetched!`
       );
 
     let convertedAccount = this.convertDomainAccountToApp(account);
@@ -43,7 +43,7 @@ export default class AccountDataAdapter implements IAccountDataPort {
       'CREATE (:user {accountId: $id, profileId: $profileId})',
       { id, profileId }
     );
-    return id;
+    return this.convertAppAccountToDomain(convertedAccount);
   }
 
   public async get(query: AccountQuery): Promise<Account[]> {
@@ -83,6 +83,7 @@ export default class AccountDataAdapter implements IAccountDataPort {
       this.convertAppProfileToDomain(account.profile)
     );
 
+    convertedProfile.id = account.id.toString();
     return convertedProfile;
   }
 

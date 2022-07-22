@@ -14,7 +14,10 @@ export default class Profile {
       throw new InvalidUsernameError(username);
     }
 
-    if (birthDate != null && birthDate.getTime() <= Date.now())
+    if (
+      birthDate != null &&
+      birthDate.getTime() >= new Date().setHours(0, 0, 0, 0)
+    )
       throw new FutureDateError(birthDate);
   }
 }

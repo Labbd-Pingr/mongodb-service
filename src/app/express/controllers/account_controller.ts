@@ -36,6 +36,8 @@ export default class AccountController {
 
   private async createAccount(req: Request, resp: Response) {
     const input: ICreateAccount = req.body as ICreateAccount;
+    if (req.body.birthDate) input.birthDate = new Date(req.body.birthDate);
+
     const usecaseResp = await this.accountUsecases.createAccount(input);
     if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
     else resp.status(400).json(usecaseResp.errors);
