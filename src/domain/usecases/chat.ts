@@ -2,11 +2,13 @@ import Chat from '../model/chat';
 import IChatDataPort from '../ports/chat_data_port';
 import { v4 } from 'uuid';
 import { ICreateChat, ISendMessage } from './interfaces/interface.chat';
+import AutheticationUsecases from './auth';
 
 export default class ChatUsecases {
   constructor(protected readonly chatDataPort: IChatDataPort) {}
 
-  public async createChat({ accountIds }: ICreateChat) {
+  @AutheticationUsecases.authorize()
+  public async createChat(sessionId: string, { accountIds }: ICreateChat) {
     const id = v4();
     const chat = new Chat(id, accountIds);
     const dbId = await this.chatDataPort.saveChat(chat);
@@ -17,7 +19,9 @@ export default class ChatUsecases {
     return id;
   }
 
+  @AutheticationUsecases.authorize()
   public async sendMessage(
+    sessionId: string,
     chatId: string,
     { senderId, text }: ISendMessage
   ): Promise<boolean> {
@@ -38,7 +42,11 @@ export default class ChatUsecases {
     }
   }
 
-  public async getChatByAccountIds(accountIds: string[]): Promise<Chat | null> {
+  @AutheticationUsecases.authorize()
+  public async getChatByAccountIds(
+    sessionId: string,
+    accountIds: string[]
+  ): Promise<Chat | null> {
     try {
       accountIds.sort();
       const chats = await this.chatDataPort.get({ accountIds: accountIds });
@@ -56,7 +64,11 @@ export default class ChatUsecases {
     }
   }
 
-  public async getChatById(chatId: string): Promise<Chat | null> {
+  @AutheticationUsecases.authorize()
+  public async getChatById(
+    sessionId: string,
+    chatId: string
+  ): Promise<Chat | null> {
     try {
       const chats = await this.chatDataPort.get({ id: chatId });
       console.log(chatId, chats, 'aaaaaaah');

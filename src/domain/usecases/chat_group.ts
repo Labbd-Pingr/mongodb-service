@@ -3,15 +3,16 @@ import IChatGroupDataPort from '../ports/chat_group_data_port';
 import { v4 } from 'uuid';
 import { IAddUser, ICreateGroupChat } from './interfaces/interface.group_chat';
 import { ISendMessage } from './interfaces/interface.chat';
+import AutheticationUsecases from './auth';
 
 export default class ChatGroupUsecases {
   constructor(protected readonly chatDataPort: IChatGroupDataPort) {}
 
-  public async createChat({
-    accountIds,
-    ownerAccountId,
-    isPrivate,
-  }: ICreateGroupChat): Promise<string | null> {
+  @AutheticationUsecases.authorize()
+  public async createChat(
+    sessionId: string,
+    { accountIds, ownerAccountId, isPrivate }: ICreateGroupChat
+  ): Promise<string | null> {
     const id = v4();
     let chat;
 
@@ -36,7 +37,9 @@ export default class ChatGroupUsecases {
     return id;
   }
 
+  @AutheticationUsecases.authorize()
   public async addUser(
+    sessionId: string,
     chatId: string,
     { accountId, chatToken }: IAddUser
   ): Promise<boolean> {
@@ -60,7 +63,9 @@ export default class ChatGroupUsecases {
     }
   }
 
+  @AutheticationUsecases.authorize()
   public async sendMessage(
+    sessionId: string,
     chatId: string,
     { senderId, text }: ISendMessage
   ): Promise<boolean> {
@@ -80,7 +85,9 @@ export default class ChatGroupUsecases {
     }
   }
 
+  @AutheticationUsecases.authorize()
   public async getChatByAccountIds(
+    sessionId: string,
     accountIds: string[]
   ): Promise<ChatGroup | null> {
     try {
@@ -100,7 +107,11 @@ export default class ChatGroupUsecases {
     }
   }
 
-  public async getChatById(chatId: string): Promise<ChatGroup | null> {
+  @AutheticationUsecases.authorize()
+  public async getChatById(
+    sessionId: string,
+    chatId: string
+  ): Promise<ChatGroup | null> {
     try {
       const chats = await this.chatDataPort.get({ id: chatId });
 
