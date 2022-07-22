@@ -40,6 +40,7 @@ export default class AccountController {
 
     const usecaseResp = await this.accountUsecases.createAccount(input);
     if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
     else resp.status(400).json(usecaseResp.errors);
   }
 

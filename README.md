@@ -53,9 +53,22 @@ A API estará rodando em `localhost:<Port>`.
   - Ao se cadastrar, o sistema irá gerar um ID único para aquele usuário, para este poder recuperar os seus dados de perfil sempre que necessário.
 
 - O sistema deve permitir o login e desconexão de usuários cadastrados.
+
   - Após a autenticação ser bem sucedida, o sistema deve armazenar os dados da sessão do usuário.
   - O usuário deve possuir uma sessão válida para usar o sistema.
   - Caso a sua sessão esteja expirada, é necessário realizar o login novamente.
+
+- Um usuário pode seguir e deixar de seguir outros usuários.
+
+  - Essa relação não é espelhada, isto é, quando um usuário A começa a seguir um usuário B, isto não significa que B começa a seguir A.
+
+- Um usuário pode bloquear outros usuários.
+
+  - Essa relação não é espelhada, isto é, quando um usuário A bloqueia um usuário B, isto não significa que B bloqueia A.
+  - Se um usuário A bloqueia um usuário B, qualquer relação entre eles será desfeita, ou seja, se A seguia B e/ou B seguia A, essas relações serão excluídas do sistema.
+
+- Um usuário pode desbloquear qualquer outro usuário bloqueado por ele.
+  - Esta ação não irá restaurar as relações excluídas no momento em que houve o bloqueio.
 
 ## Modelagens
 

@@ -28,10 +28,10 @@ export default class AccountUsecases {
       account = new Account(email, password, profile);
 
       profileDbId = await this.profileDataPort.create(profile);
-      if (!profileDbId) throw new Error('[INTERNAL ERROR]');
+      if (!profileDbId) return { succeed: false };
 
       account = await this.accountDataPort.create(account, profileDbId);
-      if (!account) throw new Error('[INTERNAL ERROR]');
+      if (!account) return { succeed: false };
 
       return {
         succeed: true,

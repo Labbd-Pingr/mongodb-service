@@ -69,6 +69,7 @@ export default class ProfileController {
       profileId
     );
     if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
     else resp.status(400).json(usecaseResp.errors);
   }
 
@@ -78,6 +79,7 @@ export default class ProfileController {
 
     const usecaseResp = await this.profileUsecases.block(session, profileId);
     if (usecaseResp.succeed) resp.sendStatus(200);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
     else resp.status(400).json(usecaseResp.errors);
   }
 
@@ -87,6 +89,7 @@ export default class ProfileController {
 
     const usecaseResp = await this.profileUsecases.unblock(session, profileId);
     if (usecaseResp.succeed) resp.sendStatus(200);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
     else resp.status(400).json(usecaseResp.errors);
   }
 

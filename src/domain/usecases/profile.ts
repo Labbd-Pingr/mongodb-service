@@ -73,7 +73,6 @@ export default class ProfileUsecases {
     if (accounts.length == 0)
       return {
         succeed: false,
-        errors: 'Internal Error',
       };
 
     const profile = accounts[0].profile;
@@ -82,13 +81,13 @@ export default class ProfileUsecases {
       await this.profileDataPort.unfollow(profile.id, profileId);
       return {
         succeed: true,
-        response: `Unfollow user with id ${profileId}`,
+        response: `Unfollowed user with id ${profileId}`,
       };
     } else {
       await this.profileDataPort.follow(profile.id, profileId);
       return {
         succeed: true,
-        response: `Follow user with id ${profileId}`,
+        response: `Followed user with id ${profileId}`,
       };
     }
   }
@@ -108,7 +107,6 @@ export default class ProfileUsecases {
     if (accounts.length == 0)
       return {
         succeed: false,
-        errors: 'Internal Error',
       };
 
     const profile = accounts[0].profile;
@@ -137,7 +135,6 @@ export default class ProfileUsecases {
     if (accounts.length == 0)
       return {
         succeed: false,
-        errors: 'Internal Error',
       };
 
     const profile = accounts[0].profile;
