@@ -10,14 +10,22 @@ import { Query } from '../../../domain/ports/post_data_port';
 import PostWithInteractions from '../../../domain/model/postWithInteractions';
 import Neo4jRepository from '../../neo4j/neo4j_repository';
 import PostDataAdapter from '../../adapters/post_data_adapter';
+import HashtagUsecases from '../../../domain/usecases/hashtag';
 
 export default class PostController {
   private readonly _router: Router;
   private postUsecases: PostUsecases;
 
-  constructor(mongo: Db, neo4j: Neo4jRepository) {
+  constructor(
+    mongo: Db,
+    neo4j: Neo4jRepository,
+    private hashtagUsecases: HashtagUsecases
+  ) {
     this._router = Router();
-    this.postUsecases = new PostUsecases(new PostDataAdapter(mongo, neo4j));
+    this.postUsecases = new PostUsecases(
+      new PostDataAdapter(mongo, neo4j),
+      hashtagUsecases
+    );
     this.mapRoutes();
   }
 

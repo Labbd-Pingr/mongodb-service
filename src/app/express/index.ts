@@ -34,7 +34,6 @@ async function setup() {
   postgres = await setupPostgres();
   neo4j = await setupNeo4j();
   redis = await setupRedis();
-  const postController: PostController = new PostController(mongo, neo4j);
   const chatController: ChatController = new ChatController(mongo);
   const groupChatController: ChatGroupController = new ChatGroupController(
     mongo
@@ -54,6 +53,11 @@ async function setup() {
   );
 
   const hashtagController: HashtagController = new HashtagController(postgres);
+  const postController: PostController = new PostController(
+    mongo,
+    neo4j,
+    hashtagController.hashtagUsecases
+  );
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
