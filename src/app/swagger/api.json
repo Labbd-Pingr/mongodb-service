@@ -1002,6 +1002,16 @@
           }
         }
       }
+    },
+    "/hashtags/update": {
+      "get": {
+        "summary": "Get hashtags",
+        "responses": {
+          "200": {
+            "description": "OK - Hashtags"
+          }
+        }
+      }
     }
   }
 }

@@ -28,6 +28,18 @@ export default class HashtagUsecases {
     }
   }
 
+  public async updateGlobalCounter() {
+    const hashtags = await this.hashtagDataPort.get({});
+    const updatedHashtags = [];
+
+    for (let i = 0; i < hashtags.length; i++) {
+      hashtags[i].updateGlobalCounter();
+      updatedHashtags.push(await this.hashtagDataPort.update(hashtags[i]));
+    }
+
+    return updatedHashtags;
+  }
+
   public async topHashtags(): Promise<Hashtag[] | null> {
     const hashtags = await this.hashtagDataPort.get({});
 
@@ -35,6 +47,6 @@ export default class HashtagUsecases {
       return null;
     }
 
-    return hashtags;
+    return hashtags.slice(0, 10);
   }
 }

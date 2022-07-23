@@ -24,7 +24,15 @@ export default class HashtagController {
     else resp.sendStatus(404);
   }
 
+  private async updateHashtags(req: Request, resp: Response) {
+    const hashtags = await this.hashtagUsecases.updateGlobalCounter();
+
+    if (hashtags != null) resp.json(hashtags).status(200);
+    else resp.sendStatus(404);
+  }
+
   private mapRoutes() {
     this._router.get('/', this.getHashtags.bind(this));
+    this._router.get('/update', this.updateHashtags.bind(this));
   }
 }

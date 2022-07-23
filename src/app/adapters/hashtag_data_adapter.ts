@@ -12,7 +12,7 @@ export default class HashtagDataAdapter implements IHashtagDataPort {
   }
 
   public async create(profile: Hashtag): Promise<Hashtag> {
-    let convertedHashtag = this.convertDomainToApp(profile);
+    let convertedHashtag = this.convertAppToDomain(profile);
     convertedHashtag = await this.hashtagRepository.save(convertedHashtag);
     return convertedHashtag;
   }
@@ -27,13 +27,14 @@ export default class HashtagDataAdapter implements IHashtagDataPort {
     );
     mappedHashtags.sort((a, b) => b.dailyCounter - a.dailyCounter);
 
-    return mappedHashtags.slice(0, 10);
+    return mappedHashtags;
   }
 
   public async update(hashtag: Hashtag): Promise<Hashtag> {
-    let convertedHashtag: HashtagModel = this.convertDomainToApp(hashtag);
-    convertedHashtag = await this.hashtagRepository.save(convertedHashtag);
-    return convertedHashtag;
+    const convertedHashtag: HashtagModel = this.convertDomainToApp(hashtag);
+    return this.convertAppToDomain(
+      await this.hashtagRepository.save(convertedHashtag)
+    );
   }
 
   private convertDomainToApp(hashtag: Hashtag): HashtagModel {

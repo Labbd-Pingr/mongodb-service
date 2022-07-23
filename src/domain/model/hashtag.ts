@@ -1,13 +1,18 @@
-import InvalidUsernameError from '../exceptions/invalid_username';
+import InvalidHashtagError from '../exceptions/invalid_hashtag';
 
-export default class Profile {
+export default class Hashtag {
   constructor(
     public hashtag: string,
     public globalCounter: number,
     public dailyCounter: number
   ) {
     if (hashtag.match(/^#/) == null) {
-      throw new InvalidUsernameError(hashtag);
+      throw new InvalidHashtagError(hashtag);
     }
+  }
+
+  public updateGlobalCounter() {
+    this.globalCounter += this.dailyCounter;
+    this.dailyCounter = 0;
   }
 }
