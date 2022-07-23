@@ -140,7 +140,7 @@ A API estará rodando em `localhost:<Port>`.
 
 ### Banco Relacional
 
-![banco_relacional](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/relacional.png)
+![banco_relacional](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/relacional.jpg)
 
 ### Banco orientado à Documentos
 
