@@ -22,8 +22,8 @@ export default class ChatController {
   }
 
   private async createChat(req: Request, resp: Response) {
-    const session: string = req.body.session;
-    delete req.body.session;
+    const session: string = req.body.sessionId;
+    delete req.body.sessionId;
     const input: ICreateChat = req.body as ICreateChat;
 
     const usecaseResp = await this.chatUsecases.createChat(session, input);
@@ -33,8 +33,8 @@ export default class ChatController {
 
   private async sendMessage(req: Request, resp: Response) {
     const chatId = req.params.id;
-    const session: string = req.body.session;
-    delete req.body.session;
+    const session: string = req.body.sessionId;
+    delete req.body.sessionId;
     const input: ISendMessage = req.body as ISendMessage;
 
     const usecaseResp = await this.chatUsecases.sendMessage(
@@ -49,7 +49,7 @@ export default class ChatController {
 
   private async getChatById(req: Request, resp: Response) {
     const chatID = req.params.id;
-    const session: string = req.body.session;
+    const session: string = req.params.session;
     const usecaseResp = await this.chatUsecases.getChatById(session, chatID);
 
     if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
@@ -58,7 +58,7 @@ export default class ChatController {
 
   private mapRoutes() {
     this._router.post('/', this.createChat.bind(this));
-    this._router.get('/:id', this.getChatById.bind(this));
+    this._router.get('/:id/:session', this.getChatById.bind(this));
     this._router.post('/:id', this.sendMessage.bind(this));
   }
 }

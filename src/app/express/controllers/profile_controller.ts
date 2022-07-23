@@ -53,7 +53,7 @@ export default class ProfileController {
 
   private async updateProfile(req: Request, resp: Response) {
     const profiletId = req.params.id;
-    const session = req.body.session;
+    const session = req.body.sessionId;
     const input: IUpdateProfile = req.body as IUpdateProfile;
 
     const usecaseResp = await this.profileUsecases.updateProfile(
@@ -68,7 +68,7 @@ export default class ProfileController {
 
   private async followOrUnfollow(req: Request, resp: Response) {
     const profileId = req.params.id;
-    const session = req.body.session;
+    const session = req.body.sessionId;
 
     const usecaseResp = await this.profileUsecases.followOrUnfollow(
       session,
@@ -81,7 +81,7 @@ export default class ProfileController {
 
   private async block(req: Request, resp: Response) {
     const profileId = req.params.id;
-    const session = req.body.session;
+    const session = req.body.sessionId;
 
     const usecaseResp = await this.profileUsecases.block(session, profileId);
     if (usecaseResp.succeed) resp.sendStatus(200);
@@ -91,7 +91,7 @@ export default class ProfileController {
 
   private async unblock(req: Request, resp: Response) {
     const profileId = req.params.id;
-    const session = req.body.session;
+    const session = req.body.sessionId;
 
     const usecaseResp = await this.profileUsecases.unblock(session, profileId);
     if (usecaseResp.succeed) resp.sendStatus(200);

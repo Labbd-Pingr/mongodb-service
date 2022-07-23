@@ -757,39 +757,6 @@
       }
     },
     "/chats/{id}": {
-      "get": {
-        "summary": "Get Chat By Id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "type": "string"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "sessionId"
-                ],
-                "properties": {
-                  "sessionId": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK - Chat"
-          }
-        }
-      },
       "post": {
         "summary": "Send Message",
         "parameters": [
@@ -825,6 +792,28 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK - Chat"
+          }
+        }
+      }
+    },
+    "/chats/{id}/{session}": {
+      "get": {
+        "summary": "Get Chat By Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "session",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK - Chat"
@@ -877,39 +866,6 @@
       }
     },
     "/groups/{id}": {
-      "get": {
-        "summary": "Get Chat By Id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "type": "string"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "sessionId"
-                ],
-                "properties": {
-                  "sessionId": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK - Chat"
-          }
-        }
-      },
       "post": {
         "summary": "Send Message",
         "parameters": [
@@ -989,6 +945,28 @@
         "responses": {
           "200": {
             "description": "OK user added"
+          }
+        }
+      }
+    },
+    "/groups/{id}/{session}": {
+      "get": {
+        "summary": "Get Group By Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "session",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Group"
           }
         }
       }

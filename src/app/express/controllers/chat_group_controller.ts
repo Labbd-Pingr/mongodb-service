@@ -25,8 +25,8 @@ export default class ChatGroupController {
   }
 
   private async createChat(req: Request, resp: Response) {
-    const session: string = req.body.session;
-    delete req.body.session;
+    const session: string = req.body.sessionId;
+    delete req.body.sessionId;
     const input: ICreateGroupChat = req.body as ICreateGroupChat;
 
     const usecaseResp = await this.chatGroupUsecases.createChat(session, input);
@@ -35,8 +35,8 @@ export default class ChatGroupController {
   }
 
   private async sendMessage(req: Request, resp: Response) {
-    const session: string = req.body.session;
-    delete req.body.session;
+    const session: string = req.body.sessionId;
+    delete req.body.sessionId;
     const chatId = req.params.id;
     const input: ISendMessage = req.body as ISendMessage;
 
@@ -50,8 +50,8 @@ export default class ChatGroupController {
   }
 
   private async addUser(req: Request, resp: Response) {
-    const session: string = req.body.session;
-    delete req.body.session;
+    const session: string = req.body.sessionId;
+    delete req.body.sessionId;
     const chatId = req.params.id;
     const input: IAddUser = req.body as IAddUser;
 
@@ -65,8 +65,8 @@ export default class ChatGroupController {
   }
 
   private async getChatById(req: Request, resp: Response) {
-    const session: string = req.body.session;
-    delete req.body.session;
+    const session: string = req.params.session;
+    delete req.body.sessionId;
     const chatID = req.params.id;
     const usecaseResp = await this.chatGroupUsecases.getChatById(
       session,
@@ -79,7 +79,7 @@ export default class ChatGroupController {
 
   private mapRoutes() {
     this._router.post('/', this.createChat.bind(this));
-    this._router.get('/:id', this.getChatById.bind(this));
+    this._router.get('/:id/:session', this.getChatById.bind(this));
     this._router.post('/:id', this.sendMessage.bind(this));
     this._router.put('/:id', this.addUser.bind(this));
   }

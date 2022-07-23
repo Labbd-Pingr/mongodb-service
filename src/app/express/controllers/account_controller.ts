@@ -62,7 +62,7 @@ export default class AccountController {
 
   private async deleteAccount(req: Request, resp: Response) {
     const accountId = req.params.id;
-    const session = req.body.session;
+    const session = req.body.sessionId;
     const usecaseResp = await this.accountUsecases.deleteAccount(
       session,
       accountId
@@ -86,7 +86,7 @@ export default class AccountController {
   }
 
   private async logoutAccount(req: Request, resp: Response) {
-    const session = req.body.session;
+    const session = req.body.sessionId;
     const usecaseResp = await this.sessionUsecases.deleteSession(session);
     if (usecaseResp.succeed) resp.sendStatus(200);
     else resp.status(401).json(usecaseResp.errors);
