@@ -618,7 +618,7 @@
     },
     "/posts/{id}/like": {
       "put": {
-        "summary": "Like a post",
+        "summary": "Likes a post",
         "parameters": [
           {
             "in": "path",
@@ -634,10 +634,10 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "accountId"
+                  "session"
                 ],
                 "properties": {
-                  "accountId": {
+                  "session": {
                     "type": "string"
                   }
                 }
@@ -646,18 +646,21 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Created - Post Id"
+          "200": {
+            "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/posts/{id}/share": {
       "put": {
-        "summary": "Share a post",
+        "summary": "Shares a post",
         "parameters": [
           {
             "in": "path",
@@ -673,12 +676,11 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "accountId",
-                  "text",
-                  "sharedPostId"
+                  "session",
+                  "text"
                 ],
                 "properties": {
-                  "accountId": {
+                  "session": {
                     "type": "string"
                   },
                   "text": {
@@ -691,17 +693,20 @@
         },
         "responses": {
           "201": {
-            "description": "Created - Post Id"
+            "description": "Created - Post"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/posts/{id}/reply": {
       "put": {
-        "summary": "Reply to a post",
+        "summary": "Replies to a post",
         "parameters": [
           {
             "in": "path",
@@ -717,12 +722,11 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "accountId",
-                  "text",
-                  "sharedPostId"
+                  "session",
+                  "text"
                 ],
                 "properties": {
-                  "accountId": {
+                  "session": {
                     "type": "string"
                   },
                   "text": {
@@ -735,10 +739,13 @@
         },
         "responses": {
           "201": {
-            "description": "Created - Post Id"
+            "description": "Created - Post"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -753,7 +760,8 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "sessionId", "accountIds"
+                  "sessionId",
+                  "accountIds"
                 ],
                 "properties": {
                   "sessionId": {

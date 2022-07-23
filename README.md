@@ -84,13 +84,75 @@ A API estará rodando em `localhost:<Port>`.
     - hashtags
 
 - Uma postagem pode ser curtida, compartilhada e/ou respondida com uma nova postagem.
+
   - Os compartilhamentos e as respostas também são postagens. Portanto, seguem as restrições de criação de uma nova postagem.
   - Além disso, é criada uma relação entre as postagens:
     - Respostas: Relação entre a resposta e a postagem original;
     - Compartilhamento: Relação entre a nova postagem e a original.
     - Para as curtidas, é criada uma relação entre a postagem e o usuário que a curtiu.
 
+- Uma postagem pode possuir palavras-chave (hashtags).
+
+  - Palavras-chave são quaisquer palavras no corpo da postagem que comecem com o caractere “#”.
+  - O sistema deve processar e organizar todas as hashtags presentes em uma postagem.
+  - Para cada hashtag em uma nova postagem, o sistema deve:
+    - Caso a hashtag não exista, inserir na tabela a tupla com o valor 1 em um contador diário e, caso exista, incrementar o valor do contador diário em uma unidade.
+    - Para cada hashtag, também é definido um contador global que possui 0 como valor padrão.
+    - [NÃO IMPLEMENTADO] Todo começo de dia, para cada entrada nesta tabela, o sistema deve:
+      - Verificar se o contador diário é maior que 0.
+      - Se sim, o sistema deve somar este valor no contador global e zerar o valor do contador diário.
+
+- As 10 palavras chaves mais utilizadas no dia por todos os usuários formam um ranking chamado Trending Topics.
+
+  - O sistema deve atualizar este ranking a cada hora com base na tabela de hashtags.
+
+- Usuários que se seguem podem trocar mensagens privadas (PV).
+
+  - Cada usuário que se segue possui um chat privado único.
+  - Cada chat será composto por:
+    - ID do usuário 1
+    - ID do usuário 2
+    - Mensagens
+  - Cada mensagem é composta por:
+    - ID do emissor
+    - Data/Horário
+    - Conteúdo
+  - Não existe um “chat espelhado”. Ou seja, o chat do usuário A com o usuário B será o mesmo chat do usuário B com o usuário A.
+  - As mensagens não poderão ser excluídas ou editadas.
+
+- Usuários podem criar grupos públicos ou privados para troca de mensagens privadas.
+
+  - Um grupo nada mais é do que um chat com propriedades especiais
+  - Este chat será composto por:
+    - ID de usuários
+    - ID do proprietário
+    - ID do chat
+    - Privacidade
+    - Token do grupo (para os grupos privados)
+    - Mensagens
+
+- Um usuário pode entrar em um grupo privado somente por um token de convite.
+
+- Um usuário pode procurar e entrar em um grupo público.
+  - Usuários não precisam de um token para entrar em grupos públicos.
+
 ## Modelagens
+
+### Banco Relacional
+
+![banco_relacional](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/relacional.jpg)
+
+### Banco orientado à Documentos
+
+![banco_documentos](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/documentos.jpg)
+
+### Banco Chave-Valor
+
+![banco_chave_valor](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/chave-valor.jpg)
+
+### Banco orientado à Grafos
+
+![banco_grafos](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/grafos.jpg)
 
 ## Autores
 

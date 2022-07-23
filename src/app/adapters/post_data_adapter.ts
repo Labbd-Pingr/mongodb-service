@@ -83,7 +83,7 @@ export default class PostDataAdapter implements IPostDataPort {
     const postWithInteractions: PostWithInteractions[] = [];
     const posts = await postsDocuments
       .map((post) => {
-        return new Post(post.id, post.profileId, post.datetime, post.text.text);
+        return new Post(post.id, post.accountId, post.datetime, post.text.text);
       })
       .toArray();
     for (const post of posts) {
