@@ -138,6 +138,22 @@ A API estará rodando em `localhost:<Port>`.
 
 ## Modelagens
 
+### Banco Relacional
+
+![banco_relacional](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/relacional.png)
+
+### Banco orientado à Documentos
+
+![banco_documentos](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/documentos.jpg)
+
+### Banco Chave-Valor
+
+![banco_chave_valor](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/chave-valor.jpg)
+
+### Banco orientado à Grafos
+
+![banco_grafos](https://github.com/Labbd-Pingr/pingr--/blob/master/docs/grafos.jpg)
+
 ## Autores
 
 - **Daniel Leal**:
