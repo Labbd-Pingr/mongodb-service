@@ -19,12 +19,11 @@ export default class HashtagUsecases {
     const hashtags = await this.hashtagDataPort.get({ hashtag });
 
     if (hashtags.length == 0) {
-      const newHashtag = new Hashtag(hashtag, 1, 1);
+      const newHashtag = new Hashtag(hashtag, 0, 1);
       return await this.hashtagDataPort.create(newHashtag);
     } else {
       const oldHashtag = hashtags[0];
       oldHashtag.dailyCounter++;
-      oldHashtag.globalCounter++;
       return await this.hashtagDataPort.update(oldHashtag);
     }
   }
