@@ -84,11 +84,22 @@ A API estará rodando em `localhost:<Port>`.
     - hashtags
 
 - Uma postagem pode ser curtida, compartilhada e/ou respondida com uma nova postagem.
+
   - Os compartilhamentos e as respostas também são postagens. Portanto, seguem as restrições de criação de uma nova postagem.
   - Além disso, é criada uma relação entre as postagens:
     - Respostas: Relação entre a resposta e a postagem original;
     - Compartilhamento: Relação entre a nova postagem e a original.
     - Para as curtidas, é criada uma relação entre a postagem e o usuário que a curtiu.
+
+- Uma postagem pode possuir palavras-chave (hashtags).
+  - Palavras-chave são quaisquer palavras no corpo da postagem que comecem com o caractere “#”.
+  - O sistema deve processar e organizar todas as hashtags presentes em uma postagem.
+  - Para cada hashtag em uma nova postagem, o sistema deve:
+    - Caso a hashtag não exista, inserir na tabela a tupla com o valor 1 em um contador diário e, caso exista, incrementar o valor do contador diário em uma unidade.
+    - Para cada hashtag, também é definido um contador global que possui 0 como valor padrão.
+    - [NÃO IMPLEMENTADO] Todo começo de dia, para cada entrada nesta tabela, o sistema deve:
+      - Verificar se o contador diário é maior que 0.
+      - Se sim, o sistema deve somar este valor no contador global e zerar o valor do contador diário.
 
 ## Modelagens
 

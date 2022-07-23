@@ -17,17 +17,23 @@ export default class PostUsecases {
     this.hashtagUsecases = new HashtagUsecases(hashtagDataPort);
   }
 
+  @AutheticationUsecases.authorize()
   public async interactWithPost(
-    { accountId, text, sharedPostId }: IInteractionWithPost,
+    session: string,
+    { text, sharedPostId }: IInteractionWithPost,
     interactionType: string
-  ): Promise<string | null> {
-    // const createdPostId = await this.createPost({ accountId, text });
-    // if (createdPostId) {
-    //   if (interactionType == 'SHARE')
-    //     this.postDataPort.sharePost(createdPostId, sharedPostId);
-    //   else this.postDataPort.replyToPost(createdPostId, sharedPostId);
-    // }
-    return null;
+  ): Promise<UsecaseResponse<Post>> {
+    const createdPostResponse = await this.createPost(session, text);
+
+    if (!createdPostResponse.response || !createdPostResponse.succeed)
+      return createdPostResponse;
+
+    const post: Post = createdPostResponse.response;
+    if (interactionType == 'SHARE')
+      this.postDataPort.sharePost(post.id, sharedPostId);
+    else if (interactionType == 'REPLY')
+      this.postDataPort.replyToPost(post.id, sharedPostId);
+    return createdPostResponse;
   }
 
   @AutheticationUsecases.authorize()
@@ -66,12 +72,24 @@ export default class PostUsecases {
     }
   }
 
-  public async likePost(id: string, accountId: string) {
+  @AutheticationUsecases.authorize()
+  public async likePost(
+    session: string,
+    id: string
+  ): Promise<UsecaseResponse<void>> {
+    const accountId = await (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(session)
+    ).response;
+
+    if (!accountId) return { succeed: false };
     const post = await this.getPostById(id);
-    if (post) {
-      return this.postDataPort.likePost(post, accountId);
-    }
-    return 0;
+    if (!post)
+      return {
+        succeed: false,
+      };
+    return {
+      succeed: (await this.postDataPort.likePost(post, accountId)) != 0,
+    };
   }
 
   @AutheticationUsecases.authorize()

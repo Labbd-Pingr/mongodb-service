@@ -52,35 +52,47 @@ export default class PostController {
 
   private async likePost(req: Request, resp: Response) {
     const postId = req.params.id;
-    const accountId = req.body['accountId'];
-    this.postUsecases.likePost(postId, accountId);
-    resp.sendStatus(200);
+    const session = req.body.session;
+    const usecaseResp = await this.postUsecases.likePost(session, postId);
+    if (usecaseResp.succeed) resp.sendStatus(200);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
+    else resp.status(401).json(usecaseResp.errors);
   }
 
   private async sharePost(req: Request, resp: Response) {
     const id = req.params.id;
-    // const inputBody: ICreatePost = req.body as ICreatePost;
-    // const input: IInteractionWithPost = {
-    //   accountId: inputBody.accountId,
-    //   text: inputBody.text,
-    //   sharedPostId: id,
-    // };
-    // const createdId = this.postUsecases.interactWithPost(input, 'SHARE');
-    // if (createdId != null) resp.sendStatus(201);
-    // else resp.sendStatus(400);
+    const session = req.body.session;
+    const text = req.body.text;
+
+    const usecaseResp = await this.postUsecases.interactWithPost(
+      session,
+      {
+        text,
+        sharedPostId: id,
+      } as IInteractionWithPost,
+      'SHARE'
+    );
+    if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
+    else resp.status(401).json(usecaseResp.errors);
   }
 
   private async replyToPost(req: Request, resp: Response) {
     const id = req.params.id;
-    // const inputBody: ICreatePost = req.body as ICreatePost;
-    // const input: IInteractionWithPost = {
-    //   accountId: inputBody.accountId,
-    //   text: inputBody.text,
-    //   sharedPostId: id,
-    // };
-    // const createdId = this.postUsecases.interactWithPost(input, 'REPLY');
-    // if (createdId != null) resp.sendStatus(201);
-    // else resp.sendStatus(400);
+    const session = req.body.session;
+    const text = req.body.text;
+
+    const usecaseResp = await this.postUsecases.interactWithPost(
+      session,
+      {
+        text,
+        sharedPostId: id,
+      } as IInteractionWithPost,
+      'REPLY'
+    );
+    if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
+    else resp.status(401).json(usecaseResp.errors);
   }
 
   private async deletePostById(req: Request, resp: Response) {
@@ -89,7 +101,7 @@ export default class PostController {
     const usecaseResp = await this.postUsecases.deletePostById(session, postId);
     if (usecaseResp.succeed) resp.sendStatus(200);
     else if (!usecaseResp.errors) resp.sendStatus(500);
-    else resp.sendStatus(401);
+    else resp.status(401).json(usecaseResp.errors);
   }
 
   private mapRoutes() {
