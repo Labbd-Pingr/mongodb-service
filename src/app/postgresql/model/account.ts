@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ProfileModel } from './profile';
 
 @Entity('account')
@@ -20,9 +14,6 @@ export class AccountModel {
   @Column()
   password!: string;
 
-  @OneToOne(() => ProfileModel, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
+  @OneToOne(() => ProfileModel, (profile) => profile.account)
   profile!: ProfileModel;
 }

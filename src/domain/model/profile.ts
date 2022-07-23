@@ -20,4 +20,21 @@ export default class Profile {
     )
       throw new FutureDateError(birthDate);
   }
+
+  public setUsername(username: string) {
+    if (username.match(/^@/) == null) {
+      throw new InvalidUsernameError(username);
+    }
+    this.username = username;
+  }
+
+  public setBirthDate(birthDate: Date) {
+    if (
+      birthDate != null &&
+      birthDate.getTime() >= new Date().setHours(0, 0, 0, 0)
+    )
+      throw new FutureDateError(birthDate);
+
+    this.birthDate = birthDate;
+  }
 }

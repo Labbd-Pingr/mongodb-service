@@ -42,14 +42,11 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     return profiles.map((profile) => this.convertAppToDomain(profile));
   }
 
-  public async update(
-    id: string,
-    profile: Profile
-  ): Promise<string | undefined> {
+  public async update(id: string, profile: Profile): Promise<Profile> {
     let convertedProfile: ProfileModel = this.convertDomainToApp(profile);
     convertedProfile.id = parseInt(id);
     convertedProfile = await this.profileRepository.save(convertedProfile);
-    return convertedProfile.id.toString();
+    return this.convertAppToDomain(convertedProfile);
   }
 
   public async deleteById(id: string): Promise<boolean> {

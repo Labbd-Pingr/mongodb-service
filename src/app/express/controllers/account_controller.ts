@@ -60,6 +60,19 @@ export default class AccountController {
     else resp.sendStatus(500);
   }
 
+  private async deleteAccount(req: Request, resp: Response) {
+    const accountId = req.params.id;
+    const session = req.body.session;
+    const usecaseResp = await this.accountUsecases.deleteAccount(
+      session,
+      accountId
+    );
+
+    if (usecaseResp.succeed) resp.sendStatus(200);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
+    else resp.status(401).json(usecaseResp.errors);
+  }
+
   private async loginAccount(req: Request, resp: Response) {
     const accountId = req.params.id;
     const password = req.body.password;
@@ -82,6 +95,7 @@ export default class AccountController {
   private mapRoutes() {
     this._router.post('/', this.createAccount.bind(this));
     this._router.get('/:id', this.getAccountById.bind(this));
+    this._router.delete('/:id', this.deleteAccount.bind(this));
     this._router.get('/:id/auth', this.isAccountLogged.bind(this));
     this._router.post('/:id/auth', this.loginAccount.bind(this));
     this._router.post('/logout', this.logoutAccount.bind(this));

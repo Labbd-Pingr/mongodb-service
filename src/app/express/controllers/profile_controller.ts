@@ -53,11 +53,17 @@ export default class ProfileController {
 
   private async updateProfile(req: Request, resp: Response) {
     const profiletId = req.params.id;
+    const session = req.body.session;
     const input: IUpdateProfile = req.body as IUpdateProfile;
 
-    const id = await this.profileUsecases.updateProfile(profiletId, input);
-    if (id != null) resp.json(id).status(201);
-    else resp.sendStatus(400);
+    const usecaseResp = await this.profileUsecases.updateProfile(
+      session,
+      profiletId,
+      input
+    );
+    if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
+    else if (!usecaseResp.errors) resp.sendStatus(500);
+    else resp.status(400).json(usecaseResp.errors);
   }
 
   private async followOrUnfollow(req: Request, resp: Response) {

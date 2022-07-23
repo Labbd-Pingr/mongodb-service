@@ -3,6 +3,7 @@ import Profile from '../model/profile';
 import IAccountDataPort from '../ports/account_data_port';
 import ILoginDataPort from '../ports/login_data_port';
 import IProfileDataPort from '../ports/profile_data_port';
+import AutheticationUsecases from './auth';
 import { UsecaseResponse } from './interfaces/interface';
 import { ICreateAccount } from './interfaces/interface.account';
 
@@ -51,6 +52,34 @@ export default class AccountUsecases {
         errors: error.message,
       };
     }
+  }
+
+  @AutheticationUsecases.authorize()
+  public async deleteAccount(
+    session: string,
+    accountId: string
+  ): Promise<UsecaseResponse<void>> {
+    const sessionAccountId = await (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(session)
+    ).response;
+    const accounts = await this.accountDataPort.get({ id: sessionAccountId });
+
+    if (accounts.length == 0)
+      return {
+        succeed: false,
+      };
+
+    if (accounts[0].id != accountId) {
+      return {
+        succeed: false,
+        errors: 'You can only delete your own account!',
+      };
+    }
+
+    await this.accountDataPort.deleteById(accountId);
+    return {
+      succeed: true,
+    };
   }
 
   public async getAccountById(id: string): Promise<UsecaseResponse<Account>> {

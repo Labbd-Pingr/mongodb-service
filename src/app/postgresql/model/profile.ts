@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { AccountModel } from './account';
 
 @Entity('profile')
 export class ProfileModel {
@@ -20,4 +27,10 @@ export class ProfileModel {
     nullable: true,
   })
   birthDate!: Date;
+
+  @OneToOne(() => AccountModel, (account) => account.profile, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  account!: AccountModel;
 }

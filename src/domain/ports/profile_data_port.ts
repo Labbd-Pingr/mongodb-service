@@ -12,7 +12,7 @@ export default interface IProfileDataPort {
   create: (profile: Profile) => Promise<string>;
   get: (query: ProfileQuery) => Promise<Profile[]>;
   getByUsernameMatch: (username: string) => Promise<Profile[]>;
-  update: (id: string, profile: Profile) => Promise<string | undefined>;
+  update: (id: string, profile: Profile) => Promise<Profile>;
   deleteById: (id: string) => Promise<boolean>;
   doesFollow: (profileId1: string, profileId2: string) => Promise<boolean>;
   follow: (profileId1: string, profileId2: string) => Promise<void>;

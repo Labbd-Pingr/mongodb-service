@@ -33,7 +33,7 @@ export default class SessionUsecases {
     if (!(await this.loginDataPort.isAValidSession(sessionId)))
       return {
         succeed: false,
-        errors: `Session id ${sessionId} is invalid!`,
+        errors: `Session id '${sessionId}' is invalid!`,
       };
 
     return {

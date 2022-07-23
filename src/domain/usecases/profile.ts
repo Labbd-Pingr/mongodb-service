@@ -33,28 +33,49 @@ export default class ProfileUsecases {
     return profiles;
   }
 
+  @AutheticationUsecases.authorize()
   public async updateProfile(
+    session: string,
     id: string,
     args: IUpdateProfile
-  ): Promise<string | null> {
-    const profile: Profile | null = await this.getProfileById(id);
-    if (profile == null) return null;
+  ): Promise<UsecaseResponse<Profile>> {
+    const accountId = await (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(session)
+    ).response;
+    const accounts = await this.accountDataPort.get({ id: accountId });
+
+    if (accounts.length == 0)
+      return {
+        succeed: false,
+      };
+
+    const profile = accounts[0].profile;
+
+    if (profile.id != id) {
+      return {
+        succeed: false,
+        errors: 'You can only update your own profile',
+      };
+    }
 
     try {
-      if (args.username) profile.username = args.username;
+      if (args.username) profile.setUsername(args.username);
       if (args.bio) profile.bio = args.bio;
       if (args.name) profile.name = args.name;
-      if (args.birthDate) profile.birthDate = args.birthDate;
+      if (args.birthDate) profile.setBirthDate(args.birthDate);
 
-      const dbId = await this.profileDataPort.update(id, profile);
-      if (!dbId) throw new Error();
-      return dbId;
+      const updatedProfile = await this.profileDataPort.update(id, profile);
+      if (!updatedProfile) return { succeed: false };
+      return {
+        succeed: true,
+        response: updatedProfile,
+      };
     } catch (e) {
       const error: Error = e as Error;
-      console.log(
-        `[ERROR] Profile was not able to be updated! ${error.message}`
-      );
-      return null;
+      return {
+        succeed: false,
+        errors: error.message,
+      };
     }
   }
 
