@@ -731,9 +731,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "accountIds"
+                  "sessionId", "accountIds"
                 ],
                 "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  },
                   "accountIds": {
                     "type": "array",
                     "items": [
@@ -763,6 +766,24 @@
             "type": "string"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sessionId"
+                ],
+                "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK - Chat"
@@ -785,10 +806,14 @@
               "schema": {
                 "type": "object",
                 "required": [
+                  "sessionId",
                   "senderId",
                   "text"
                 ],
                 "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  },
                   "senderId": {
                     "type": "string"
                   },
@@ -817,11 +842,15 @@
               "schema": {
                 "type": "object",
                 "required": [
+                  "sessionId",
                   "accountIds",
                   "ownerAccountId",
                   "isPrivate"
                 ],
                 "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  },
                   "accountIds": {
                     "type": "array",
                     "items": [
@@ -857,6 +886,24 @@
             "type": "string"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sessionId"
+                ],
+                "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK - Chat"
@@ -879,10 +926,14 @@
               "schema": {
                 "type": "object",
                 "required": [
+                  "sessionId",
                   "senderId",
                   "text"
                 ],
                 "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  },
                   "senderId": {
                     "type": "string"
                   },
@@ -916,10 +967,14 @@
               "schema": {
                 "type": "object",
                 "required": [
+                  "sessionId",
                   "accountId",
                   "chatToken"
                 ],
                 "properties": {
+                  "sessionId": {
+                    "type": "string"
+                  },
                   "accountId": {
                     "type": "string"
                   },

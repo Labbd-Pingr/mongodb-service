@@ -29,9 +29,9 @@ export default class ChatGroupController {
     delete req.body.session;
     const input: ICreateGroupChat = req.body as ICreateGroupChat;
 
-    const id = await this.chatGroupUsecases.createChat(session, input);
-    if (id != null) resp.status(201).json(id);
-    else resp.sendStatus(400);
+    const usecaseResp = await this.chatGroupUsecases.createChat(session, input);
+    if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
+    else resp.status(400).json(usecaseResp.errors);
   }
 
   private async sendMessage(req: Request, resp: Response) {
@@ -40,9 +40,13 @@ export default class ChatGroupController {
     const chatId = req.params.id;
     const input: ISendMessage = req.body as ISendMessage;
 
-    if (await this.chatGroupUsecases.sendMessage(session, chatId, input))
-      resp.sendStatus(201);
-    else resp.sendStatus(400);
+    const usecaseResp = await this.chatGroupUsecases.sendMessage(
+      session,
+      chatId,
+      input
+    );
+    if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
+    else resp.status(400).json(usecaseResp.errors);
   }
 
   private async addUser(req: Request, resp: Response) {
@@ -51,19 +55,26 @@ export default class ChatGroupController {
     const chatId = req.params.id;
     const input: IAddUser = req.body as IAddUser;
 
-    if (await this.chatGroupUsecases.addUser(session, chatId, input))
-      resp.sendStatus(201);
-    else resp.sendStatus(400);
+    const usecaseResp = await this.chatGroupUsecases.addUser(
+      session,
+      chatId,
+      input
+    );
+    if (usecaseResp.succeed) resp.status(201).json(usecaseResp.response);
+    else resp.status(400).json(usecaseResp.errors);
   }
 
   private async getChatById(req: Request, resp: Response) {
     const session: string = req.body.session;
     delete req.body.session;
     const chatID = req.params.id;
-    const chat = await this.chatGroupUsecases.getChatById(session, chatID);
+    const usecaseResp = await this.chatGroupUsecases.getChatById(
+      session,
+      chatID
+    );
 
-    if (chat) resp.status(200).json(chat);
-    else resp.sendStatus(400);
+    if (usecaseResp.succeed) resp.status(200).json(usecaseResp.response);
+    else resp.status(400).json(usecaseResp.errors);
   }
 
   private mapRoutes() {
