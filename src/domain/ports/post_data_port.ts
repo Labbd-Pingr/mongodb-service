@@ -2,7 +2,7 @@ import Post from '../model/post';
 import PostWithInteractions from '../model/postWithInteractions';
 
 export interface PostQuery {
-  profileId?: string;
+  accountId?: string;
   id?: string;
 }
 

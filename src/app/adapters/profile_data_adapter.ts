@@ -5,6 +5,9 @@ import IProfileDataPort, {
 import { ProfileModel } from '../postgresql/model/profile';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import Neo4jRepository from '../neo4j/neo4j_repository';
+import Account from '../../domain/model/account';
+import { AccountModel } from '../postgresql/model/account';
+import { profile } from 'console';
 
 export default class ProfileDataAdapter implements IProfileDataPort {
   private readonly profileRepository: Repository<ProfileModel>;
@@ -31,7 +34,7 @@ export default class ProfileDataAdapter implements IProfileDataPort {
       convertedQuery as FindOptionsWhere<ProfileModel>
     );
 
-    return profiles.map((profile) => this.convertAppToDomain(profile));
+    return profiles.map((profile) => this.convertProfileAppToDomain(profile));
   }
 
   public async getByUsernameMatch(username: string): Promise<Profile[]> {
@@ -39,14 +42,29 @@ export default class ProfileDataAdapter implements IProfileDataPort {
       `SELECT * FROM profile WHERE username LIKE '${username}%'`
     );
 
-    return profiles.map((profile) => this.convertAppToDomain(profile));
+    return profiles.map((profile) => this.convertProfileAppToDomain(profile));
+  }
+
+  public async getAccountByProfileId(profileId: string): Promise<Account> {
+    const profiles = await this.profileRepository.find({
+      where: {
+        id: parseInt(profileId),
+      },
+      relations: {
+        account: true,
+      },
+    });
+
+    return profiles.map((profile) => {
+      return this.convertAccountAppToDomain(profile.account, profile);
+    })[0];
   }
 
   public async update(id: string, profile: Profile): Promise<Profile> {
     let convertedProfile: ProfileModel = this.convertDomainToApp(profile);
     convertedProfile.id = parseInt(id);
     convertedProfile = await this.profileRepository.save(convertedProfile);
-    return this.convertAppToDomain(convertedProfile);
+    return this.convertProfileAppToDomain(convertedProfile);
   }
 
   public async deleteById(id: string): Promise<boolean> {
@@ -113,7 +131,7 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     return convertedProfile;
   }
 
-  private convertAppToDomain(profile: ProfileModel): Profile {
+  private convertProfileAppToDomain(profile: ProfileModel): Profile {
     const convertedProfile = new Profile(
       profile.username,
       profile.name,
@@ -122,5 +140,19 @@ export default class ProfileDataAdapter implements IProfileDataPort {
     );
 
     return convertedProfile;
+  }
+
+  private convertAccountAppToDomain(
+    account: AccountModel,
+    profile: ProfileModel
+  ): Account {
+    const convertedAccount = new Account(
+      account.email,
+      account.password,
+      this.convertProfileAppToDomain(profile)
+    );
+
+    convertedAccount.id = account.id.toString();
+    return convertedAccount;
   }
 }

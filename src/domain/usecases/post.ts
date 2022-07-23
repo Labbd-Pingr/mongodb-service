@@ -140,10 +140,14 @@ export default class PostUsecases {
     };
   }
 
-  // REMINDER: Esse método deve ser chamado no controler de usuário (exemplo: /profiles/:id/posts)
-  public async getPostsByProfileId(profileId: string): Promise<Post[]> {
-    const posts = await this.postDataPort.get({ profileId });
-    return posts;
+  public async getPostsByAccountId(
+    accountId: string
+  ): Promise<UsecaseResponse<Post[]>> {
+    const posts = await this.postDataPort.get({ accountId });
+    return {
+      succeed: true,
+      response: posts,
+    };
   }
 
   public async getPosts(query: PostQuery): Promise<Post[]> {

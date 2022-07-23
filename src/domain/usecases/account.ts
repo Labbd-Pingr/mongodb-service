@@ -76,7 +76,7 @@ export default class AccountUsecases {
       };
     }
 
-    await this.accountDataPort.deleteById(accountId);
+    await this.accountDataPort.deleteById(accounts[0].id);
     return {
       succeed: true,
     };

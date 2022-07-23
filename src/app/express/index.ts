@@ -41,7 +41,8 @@ async function setup() {
   );
   const profileController: ProfileController = new ProfileController(
     postgres,
-    neo4j
+    neo4j,
+    mongo
   );
   const accountController: AccountController = new AccountController(
     postgres,

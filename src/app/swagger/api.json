@@ -370,6 +370,24 @@
         }
       }
     },
+    "/profiles/{id}/posts": {
+      "get": {
+        "summary": "Gets all posts by profile Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Array of posts"
+          }
+        }
+      }
+    },
     "/profiles/{id}/relationship": {
       "post": {
         "summary": "Follows or unfollows a specific profile",

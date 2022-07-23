@@ -26,6 +26,10 @@ export default class ProfileUsecases {
     return profiles;
   }
 
+  public async getAccountByProfileId(id: string) {
+    return await this.profileDataPort.getAccountByProfileId(id);
+  }
+
   public async searchProfilesByUsernameMatch(
     username: string
   ): Promise<Profile[]> {
