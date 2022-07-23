@@ -57,7 +57,7 @@ async function setup() {
   const postController: PostController = new PostController(
     mongo,
     neo4j,
-    hashtagController.hashtagUsecases
+    postgres
   );
 
   app.use(express.json());

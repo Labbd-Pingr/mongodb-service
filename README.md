@@ -68,7 +68,27 @@ A API estará rodando em `localhost:<Port>`.
   - Se um usuário A bloqueia um usuário B, qualquer relação entre eles será desfeita, ou seja, se A seguia B e/ou B seguia A, essas relações serão excluídas do sistema.
 
 - Um usuário pode desbloquear qualquer outro usuário bloqueado por ele.
+
   - Esta ação não irá restaurar as relações excluídas no momento em que houve o bloqueio.
+
+- O usuário pode criar uma postagem de até 140 caracteres.
+
+  - Uma postagem não pode ser editada, mas pode ser apagada pelo autor.
+  - A postagem é composta por um cabeçalho e um corpo.
+  - O cabeçalho define informações como:
+    - ID do perfil do autor da postagem
+    - ID da postagem
+    - Data/Horário
+  - O corpo define informações como:
+    - texto
+    - hashtags
+
+- Uma postagem pode ser curtida, compartilhada e/ou respondida com uma nova postagem.
+  - Os compartilhamentos e as respostas também são postagens. Portanto, seguem as restrições de criação de uma nova postagem.
+  - Além disso, é criada uma relação entre as postagens:
+    - Respostas: Relação entre a resposta e a postagem original;
+    - Compartilhamento: Relação entre a nova postagem e a original.
+    - Para as curtidas, é criada uma relação entre a postagem e o usuário que a curtiu.
 
 ## Modelagens
 

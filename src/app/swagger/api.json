@@ -501,7 +501,7 @@
     },
     "/posts": {
       "get": {
-        "summary": "Get posts",
+        "summary": "Gets posts",
         "parameters": [
           {
             "in": "query",
@@ -521,7 +521,7 @@
         }
       },
       "post": {
-        "summary": "Create new post",
+        "summary": "Creates a new post",
         "requestBody": {
           "required": true,
           "content": {
@@ -529,11 +529,11 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "accountId",
+                  "session",
                   "text"
                 ],
                 "properties": {
-                  "accountId": {
+                  "session": {
                     "type": "string"
                   },
                   "text": {
@@ -546,7 +546,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created - Post Id"
+            "description": "Created - Post"
           },
           "400": {
             "description": "Bad Request"
@@ -556,7 +556,7 @@
     },
     "/posts/{id}": {
       "get": {
-        "summary": "Get post with interactions",
+        "summary": "Gets post with interactions by Id",
         "parameters": [
           {
             "in": "path",
@@ -567,7 +567,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Post with interactinos"
+            "description": "OK - Post with interactions"
           },
           "404": {
             "description": "Not found"
@@ -575,7 +575,7 @@
         }
       },
       "delete": {
-        "summary": "Delete a post",
+        "summary": "Deletes a post by Id",
         "parameters": [
           {
             "in": "path",
@@ -584,12 +584,34 @@
             "required": true
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "session"
+                ],
+                "properties": {
+                  "session": {
+                    "type": "string",
+                    "format": "session"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Deleted - Post Id"
+            "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

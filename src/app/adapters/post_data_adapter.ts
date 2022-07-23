@@ -1,7 +1,7 @@
 import { Collection, Db, DeleteResult } from 'mongodb';
 import PostWithInteractions from '../../domain/model/postWithInteractions';
 import Post from '../../domain/model/post';
-import IPostDataPort, { Query } from '../../domain/ports/post_data_port';
+import IPostDataPort, { PostQuery } from '../../domain/ports/post_data_port';
 import Neo4jRepository from '../neo4j/neo4j_repository';
 
 export default class PostDataAdapter implements IPostDataPort {
@@ -13,8 +13,8 @@ export default class PostDataAdapter implements IPostDataPort {
     this.neo4j = neo4j;
   }
 
-  public async savePost(post: Post): Promise<string | undefined> {
-    const savedPost = await this.postCollection.insertOne(post);
+  public async save(post: Post): Promise<Post> {
+    await this.postCollection.insertOne(post);
     await this.neo4j.runCommand('CREATE (:post {postId: $id})', {
       id: post.id,
     });
@@ -22,7 +22,9 @@ export default class PostDataAdapter implements IPostDataPort {
       'MATCH (u:user), (p:post) WHERE u.accountId = $accountId AND p.postId = $postId CREATE (u)-[:PUBLISH]->(p)',
       { accountId: post.accountId.toString(), postId: post.id }
     );
-    return savedPost.insertedId.toString();
+
+    const posts = await this.get({ id: post.id });
+    return posts[0];
   }
 
   public async sharePost(
@@ -55,7 +57,7 @@ export default class PostDataAdapter implements IPostDataPort {
     return 1;
   }
 
-  public async delete(query: Query): Promise<number> {
+  public async delete(query: PostQuery): Promise<number> {
     const result: DeleteResult = await this.postCollection.deleteOne(query);
     await this.neo4j.runCommand(
       'MATCH (p: post) WHERE p.postId = $postId DETACH DELETE p',
@@ -64,17 +66,17 @@ export default class PostDataAdapter implements IPostDataPort {
     return result.deletedCount;
   }
 
-  public async get(query: Query): Promise<Post[]> {
+  public async get(query: PostQuery): Promise<Post[]> {
     const posts = await this.postCollection.find(query);
     return posts
       .map((post) => {
-        return new Post(post.id, post.profileId, post.datetime, post.text.text);
+        return new Post(post.id, post.accountId, post.datetime, post.text.text);
       })
       .toArray();
   }
 
   public async getWithInteractions(
-    query: Query
+    query: PostQuery
   ): Promise<PostWithInteractions[]> {
     const postsDocuments = await this.postCollection.find(query);
 

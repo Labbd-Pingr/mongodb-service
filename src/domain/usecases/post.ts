@@ -1,49 +1,68 @@
 import Post from '../model/post';
-import IPostDataPort, { Query } from '../ports/post_data_port';
-import { ICreatePost, IInteractionWithPost } from './interfaces/interface.post';
+import IPostDataPort, { PostQuery } from '../ports/post_data_port';
+import { IInteractionWithPost } from './interfaces/interface.post';
 import { v4 } from 'uuid';
 import PostWithInteractions from '../model/postWithInteractions';
 import HashtagUsecases from './hashtag';
+import { UsecaseResponse } from './interfaces/interface';
+import AutheticationUsecases from './auth';
+import IHashtagDataPort from '../ports/hashtag_data_port';
 
 export default class PostUsecases {
+  private readonly hashtagUsecases: HashtagUsecases;
   constructor(
     private readonly postDataPort: IPostDataPort,
-    private readonly hashtagUsecases: HashtagUsecases
-  ) {}
+    hashtagDataPort: IHashtagDataPort
+  ) {
+    this.hashtagUsecases = new HashtagUsecases(hashtagDataPort);
+  }
 
   public async interactWithPost(
     { accountId, text, sharedPostId }: IInteractionWithPost,
     interactionType: string
   ): Promise<string | null> {
-    const createdPostId = await this.createPost({ accountId, text });
-    if (createdPostId) {
-      if (interactionType == 'SHARE')
-        this.postDataPort.sharePost(createdPostId, sharedPostId);
-      else this.postDataPort.replyToPost(createdPostId, sharedPostId);
-    }
+    // const createdPostId = await this.createPost({ accountId, text });
+    // if (createdPostId) {
+    //   if (interactionType == 'SHARE')
+    //     this.postDataPort.sharePost(createdPostId, sharedPostId);
+    //   else this.postDataPort.replyToPost(createdPostId, sharedPostId);
+    // }
     return null;
   }
 
-  public async createPost({
-    accountId,
-    text,
-  }: ICreatePost): Promise<string | null> {
+  @AutheticationUsecases.authorize()
+  public async createPost(
+    session: string,
+    text: string
+  ): Promise<UsecaseResponse<Post>> {
     try {
+      const accountId = await (
+        await AutheticationUsecases.sessionUsecases.getAndValidateSession(
+          session
+        )
+      ).response;
+
+      if (!accountId) return { succeed: false };
+
       const id = v4();
-      const post: Post = new Post(id, accountId, new Date(), text || '');
-      const dbId = await this.postDataPort.savePost(post);
-      if (dbId == undefined) throw new Error();
+      let post: Post = new Post(id, accountId, new Date(), text || '');
+      post = await this.postDataPort.save(post);
 
       if (post.text)
-        post.text?.hashtags.forEach((hashtag) =>
+        post.text.hashtags.forEach((hashtag) =>
           this.hashtagUsecases.updateOrCreateHashtag(hashtag)
         );
 
-      return id;
+      return {
+        succeed: true,
+        response: post,
+      };
     } catch (e) {
       const error: Error = e as Error;
-      console.log(`[ERROR] Post was not able to be created! ${error.message}`);
-      return null;
+      return {
+        succeed: false,
+        errors: error.message,
+      };
     }
   }
 
@@ -55,9 +74,27 @@ export default class PostUsecases {
     return 0;
   }
 
-  public async deletePostById(id: string) {
-    if (await !this.postDataPort.delete({ id }))
-      console.log(`[ERROR] Could not delete post with id ${id}`);
+  @AutheticationUsecases.authorize()
+  public async deletePostById(
+    session: string,
+    id: string
+  ): Promise<UsecaseResponse<void>> {
+    const accountId = (
+      await AutheticationUsecases.sessionUsecases.getAndValidateSession(session)
+    ).response;
+
+    const post = await this.getPostById(id);
+
+    if (post?.accountId != accountId) {
+      return {
+        succeed: false,
+        errors: 'You can only delete your own posts!',
+      };
+    }
+
+    return {
+      succeed: await !this.postDataPort.delete({ id }),
+    };
   }
 
   public async getPostById(id: string): Promise<Post | null> {
@@ -72,15 +109,17 @@ export default class PostUsecases {
 
   public async getPostWithInteractionsById(
     id: string
-  ): Promise<PostWithInteractions | null> {
+  ): Promise<UsecaseResponse<PostWithInteractions>> {
     const posts = await this.postDataPort.getWithInteractions({ id });
-    console.log('no usecase', posts);
     if (posts.length == 0) {
       console.log(`[ERROR] Could not get post with id ${id}`);
-      return null;
+      return { succeed: false };
     }
 
-    return posts[0];
+    return {
+      succeed: true,
+      response: posts[0],
+    };
   }
 
   // REMINDER: Esse método deve ser chamado no controler de usuário (exemplo: /profiles/:id/posts)
@@ -89,7 +128,7 @@ export default class PostUsecases {
     return posts;
   }
 
-  public async getPosts(query: Query): Promise<Post[]> {
+  public async getPosts(query: PostQuery): Promise<Post[]> {
     return await this.postDataPort.get(query);
   }
 }
