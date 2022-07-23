@@ -62,7 +62,7 @@ export default class AccountController {
 
   private async deleteAccount(req: Request, resp: Response) {
     const accountId = req.params.id;
-    const session = req.body.sessionId;
+    const session = req.body.session;
     const usecaseResp = await this.accountUsecases.deleteAccount(
       session,
       accountId
