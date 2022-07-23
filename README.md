@@ -92,6 +92,7 @@ A API estará rodando em `localhost:<Port>`.
     - Para as curtidas, é criada uma relação entre a postagem e o usuário que a curtiu.
 
 - Uma postagem pode possuir palavras-chave (hashtags).
+
   - Palavras-chave são quaisquer palavras no corpo da postagem que comecem com o caractere “#”.
   - O sistema deve processar e organizar todas as hashtags presentes em uma postagem.
   - Para cada hashtag em uma nova postagem, o sistema deve:
@@ -100,6 +101,40 @@ A API estará rodando em `localhost:<Port>`.
     - [NÃO IMPLEMENTADO] Todo começo de dia, para cada entrada nesta tabela, o sistema deve:
       - Verificar se o contador diário é maior que 0.
       - Se sim, o sistema deve somar este valor no contador global e zerar o valor do contador diário.
+
+- As 10 palavras chaves mais utilizadas no dia por todos os usuários formam um ranking chamado Trending Topics.
+
+  - O sistema deve atualizar este ranking a cada hora com base na tabela de hashtags.
+
+- Usuários que se seguem podem trocar mensagens privadas (PV).
+
+  - Cada usuário que se segue possui um chat privado único.
+  - Cada chat será composto por:
+    - ID do usuário 1
+    - ID do usuário 2
+    - Mensagens
+  - Cada mensagem é composta por:
+    - ID do emissor
+    - Data/Horário
+    - Conteúdo
+  - Não existe um “chat espelhado”. Ou seja, o chat do usuário A com o usuário B será o mesmo chat do usuário B com o usuário A.
+  - As mensagens não poderão ser excluídas ou editadas.
+
+- Usuários podem criar grupos públicos ou privados para troca de mensagens privadas.
+
+  - Um grupo nada mais é do que um chat com propriedades especiais
+  - Este chat será composto por:
+    - ID de usuários
+    - ID do proprietário
+    - ID do chat
+    - Privacidade
+    - Token do grupo (para os grupos privados)
+    - Mensagens
+
+- Um usuário pode entrar em um grupo privado somente por um token de convite.
+
+- Um usuário pode procurar e entrar em um grupo público.
+  - Usuários não precisam de um token para entrar em grupos públicos.
 
 ## Modelagens
 
